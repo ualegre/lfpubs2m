@@ -1,0 +1,611 @@
+/**
+ * JavaCC template file created by SF JavaCC plug-in 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  JDK_VERSION = "1.8";
+  static = false;
+}
+
+PARSER_BEGIN(LFPUBSCompiler)
+package edu.casetools.lfpubs2m.compiler;
+import java.io.FileReader;
+import java.util.Vector;
+
+import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
+import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
+import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
+import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
+
+
+public class LFPUBSCompiler {
+public static void main(String[] args) { 
+try{ 
+LFPUBSCompiler parser = new LFPUBSCompiler (new FileReader("C:/LFPUBS/test.txt"));  
+        parser.translate();
+
+System.out.println("SYNTAX TEXT OK");
+}catch (Exception ex) 
+{ex.printStackTrace() ;} 
+} 
+
+}
+
+PARSER_END(LFPUBSCompiler)
+
+SKIP: {" " | "\t" | "\n" | "\r"  }
+
+SKIP:
+{
+        <"/*">: INSIDE_COMMENT
+}
+
+<INSIDE_COMMENT>
+SKIP:
+{
+        <"*/">: DEFAULT
+|       <~[]>
+}
+
+TOKEN: { <WHEN: "when">}
+TOKEN :{ < NEGATION: "#" >}
+TOKEN : { <LEFT_BRACKET: "(" > }
+TOKEN : { <RIGHT_BRACKET: ")" > }
+TOKEN : { <LEFT_SQR_BRACKET: "[" > }
+TOKEN : { <RIGHT_SQR_BRACKET: "]" > }
+TOKEN : { <LEFT_KEY_BRACKET: "{" > }
+TOKEN : { <RIGHT_KEY_BRACKET: "}" > }
+TOKEN : { <POINT: "." > }
+TOKEN : { <POINT_COMMA: ";" > }
+TOKEN : { <TWO_POINT: ":" > }
+TOKEN : { <COMMA: "," > }
+TOKEN : { <SLASH: "/" > }
+TOKEN : { <HYPHEN: "-" > }
+TOKEN : { <ANDPERSAND: "&" > }
+TOKEN : { < UNDERSCORE: ["_"] >	}
+TOKEN : { < DIGIT : [ "0"-"9" ] > }
+TOKEN : { < ALPHABET: ["a" - "z"] > }
+TOKEN : { < CAPSALPHABET: ["A" - "Z"] > }
+TOKEN : { < ARROW: "=>" > }
+TOKEN : { < EQUAL: "=" > }
+TOKEN : { < LESS_THAN: "<" > }
+TOKEN : { < MORE_THAN: ">" > }
+TOKEN : { < EQ_LESS_THAN: "<=" > }
+TOKEN : { < EQ_MORE_THAN: ">=" > }
+TOKEN : { < PLUS: "+" > }
+
+//General commands
+TOKEN: { <START: "start" >}
+TOKEN: { <SIMPLE: "simple" >}
+TOKEN: { <UNORDERED: "unordered" >}
+TOKEN: { <END: "end" >}
+
+//Action Status
+TOKEN: { <ON: "on" >}
+TOKEN: { <OFF: "off" >}
+
+//Action Map
+TOKEN: { <ACTION_MAP: "Action Map" >}
+TOKEN: { <GENERAL_CONDITIONS: "General Conditions" >}
+//Action Pattern
+TOKEN: { <ACTION_PATTERN: "(Action Pattern" >}
+//On occurs
+TOKEN: { <ON_OCCURS: "ON occurs" >}
+TOKEN: { <FREQUENCY: "Frequency:" >}
+TOKEN: { <PRIORITY: "Priority:" >}
+TOKEN: { <IF_CONTEXT: "IF context" >}
+TOKEN: { <THEN: "THEN" >}
+TOKEN: { <DO: "do">}
+
+
+
+void translate():
+{
+	int mapId = 0;
+	Vector<LFPUBSPattern> patterns = new Vector<LFPUBSPattern>();
+	LFPUBSPattern auxiliarPattern = null;
+}
+{    mapId = actionMapId()
+	 generalConditions()
+     (auxiliarPattern = pattern(mapId){patterns.add(auxiliarPattern);})*
+      < EOF >
+	{
+	  for(int i=0;i<patterns.size();i++)	  {
+	  System.out.println(patterns.get(i).printPattern());
+	  }
+	  	  System.out.println("END");  	}
+}
+
+
+int actionMapId():
+{
+  String id = "";
+  Token t;
+}
+{
+	<ACTION_MAP >  (t =  < DIGIT >	{
+	  id = id + t.toString();	})*
+
+	{
+	  return Integer.parseInt(id);	}
+	 
+}
+
+void generalConditions():
+{
+  Token t;
+}
+{
+	< LEFT_BRACKET >< GENERAL_CONDITIONS><RIGHT_BRACKET >
+	(condition())*
+	
+ 
+}
+
+LFPUBSPattern pattern(int actionMapId):
+{
+  LFPUBSPattern     pattern     = new LFPUBSPattern();
+  Occurs 	  onOccurs    = null;
+  IfContext   ifContext = null;
+  ThenDo      thenDo      = null;
+  int 		  patternId   = 0;
+}
+{
+  		patternId = patternID()
+  		{
+  		  pattern.setId(actionMapId+"_"+patternId);  		}
+  		onOccurs = event()
+  		{
+  		  pattern.setEvent(onOccurs);  		}
+  		ifContext = condition()  		{
+  		  pattern.setContext(ifContext);  		}
+  		thenDo = doAction()
+  		{
+  		  pattern.setAction(thenDo);
+  		  return pattern;  		}
+  		  
+}
+
+int patternID():
+{
+  String id = "";
+  Token aux;
+}
+{
+ < ACTION_PATTERN > ( aux = < DIGIT > {
+     id = id + aux.toString();   })* < RIGHT_BRACKET >
+   {
+     System.out.println("ID: "+id);
+     return Integer.parseInt(id);   }
+ 
+}
+Occurs event():
+{
+  Occurs onOccurs = null;
+}
+{
+    <ON_OCCURS><LEFT_BRACKET > onOccurs = primitiveEvent()	//(< ANDPERSAND >onOccurs = primitiveEvent())*
+	<FREQUENCY >(< DIGIT >)*
+ {
+   return onOccurs; }}
+Occurs primitiveEvent():
+{
+  Occurs onOccurs = new Occurs();
+}
+{
+     onOccurs = type(onOccurs) < COMMA >
+//   onOccurs = action(onOccurs)< COMMA >   {     onOccurs.setTime(timeConstant());   }   
+   {     return onOccurs;
+  }
+}
+Occurs action(Occurs onOccurs):
+{
+  String type;
+}
+{
+    {     	onOccurs = type(onOccurs);
+     	
+     	  System.out.println("OUT OF TYPE");     	  }//   <COMMA>//   {//       	{//     	  System.out.println("INTO SENSORS");//     	}//         onOccurs.setSensors(actionSet());//   }
+  
+  {
+    return onOccurs;  }  
+}
+Vector<Sensor > actionSet():{	Vector<Sensor > actionSet = new Vector<Sensor>();	Sensor sensor;}{		      	(
+      	  (< LEFT_BRACKET >)*      	  ( sensor = onOccursSimpleActions() {actionSet.add(sensor); } )      	    ( actionSet = onOccursUnorderedActions(actionSet) )* 		 )    {      return actionSet;    }}
+
+Sensor onOccursSimpleActions():
+{
+  Sensor sensor = new Sensor();
+}
+{
+  {
+    System.out.println("SIMPLE ACTION");
+  }
+  {sensor.setStatus(actionStatus());} < COMMA > {sensor.setId(device());}
+  {
+    return sensor;
+  }
+}
+
+Sensor simpleActions():
+{
+  Sensor sensor = new Sensor();
+}
+{
+  {
+    System.out.println("SIMPLE ACTION");  }
+  <LEFT_BRACKET >
+  {sensor.setStatus(actionStatus());} < COMMA > {sensor.setId(device());}
+  {
+    return sensor;  }
+}
+
+String device():
+{
+  Token name;
+  String auxiliar = "";
+}
+{
+    ( (name = <DIGIT>
+	 {
+	   auxiliar = auxiliar + name.toString();
+	 })
+	 | (name = <ALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 })
+	 | (name = <UNDERSCORE> {
+	   auxiliar = auxiliar + name.toString();
+	 })
+	 | (name = <CAPSALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 })
+	 | (name = <LEFT_BRACKET> {
+	   auxiliar = auxiliar + name.toString();
+	   auxiliar = auxiliar + openBracket();
+	 })
+	 | (name = <RIGHT_BRACKET> {
+	   System.out.println("SALIDA : "+auxiliar);
+	   return auxiliar;
+	 })
+	)+
+
+}
+
+String openBracket():
+{
+   Token name;
+   String auxiliar = "";
+}
+{
+   ( name = <DIGIT>
+	 {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <ALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <UNDERSCORE> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <CAPSALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <LEFT_BRACKET> {
+	   auxiliar = auxiliar + name.toString();
+	   auxiliar = openBracket();
+	 }
+	 | name = <RIGHT_BRACKET> {
+	   auxiliar = auxiliar + name.toString();
+	   return auxiliar;
+	 }	 
+	)+
+}
+
+
+String actionStatus():
+{
+  String status = "";
+  Token aux;
+}
+{
+  ( (aux = < ON >{ status = status + aux.toString();} )|( aux = < OFF > { status = status + aux.toString();}) )
+	{	  return status;
+	}
+
+}
+Vector<Sensor> unorderedActions(Vector<Sensor> sensors):
+{
+  
+}
+{{
+  System.out.println("UNORDERED ACTION");}
+( {sensors.add(simpleActions());} ( <ANDPERSAND> <LEFT_BRACKET >  {sensors.add(simpleActions());})*)
+	{
+	  return sensors;	}
+}
+
+Vector<Sensor> onOccursUnorderedActions(Vector<Sensor> sensors):
+{
+  
+}
+{
+{
+
+}
+ 
+  <ANDPERSAND> <LEFT_BRACKET >  {sensors.add(onOccursSimpleActions());}
+	{
+	  return sensors;
+	}
+}
+Occurs type(Occurs onOccurs):
+{
+  String result = "";
+  Sensor auxSensor;
+  Token aux;
+  Vector <Sensor> sensors = new Vector<Sensor>();
+}
+{
+  
+  (aux = < SIMPLE > <COMMA> auxSensor = simpleActions()
+     { onOccurs.setType(aux.toString());
+  	sensors.add(auxSensor);  }| aux = < UNORDERED > <COMMA> <LEFT_BRACKET >sensors = unorderedActions(sensors) <RIGHT_BRACKET > {result = result + aux.toString();
+  }| aux = <START> <COMMA > <HYPHEN ><HYPHEN >{result = result + aux.toString();
+  })
+  {
+ //System.out.println("TYPE: "+result);
+    onOccurs.setSensors(sensors);
+    //System.out.println("LINE: "+input_stream.line+" COLUMN:"+input_stream.column);
+    return onOccurs;  }
+  
+}
+
+String  timeConstant():
+{
+  String auxiliar = "";
+  Token name;
+}
+{
+    ( name = <DIGIT>
+	 {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <RIGHT_BRACKET> {
+	  // auxiliar = auxiliar + name.toString();
+	  // System.out.println("ENCONTRADO: "+auxiliar);
+	   return auxiliar;
+	 }
+	 | name = <ALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	)*
+	{	  return auxiliar;
+	}
+}
+
+
+IfContext condition():
+{
+  IfContext ifContext = new IfContext();
+}
+{
+  < IF_CONTEXT ><LEFT_BRACKET > (attribute())* <RIGHT_BRACKET >  
+  {
+    return ifContext;  }}
+
+void primitiveQuantitativeCondition():
+{
+}
+{
+    quantitativeCondition()
+}
+
+void primitiveQualitativeCondition():
+{
+}
+{
+  qualitativeCondition()
+}
+
+IfContext attribute():
+{
+  IfContext ifContext = new IfContext();
+   
+//  SensorBound sensorBound = null;
+}
+{
+  
+  ( < LEFT_BRACKET >
+    (calendar()|sensor())
+    ("OR"  calendar()|sensor())*
+    < RIGHT_BRACKET >
+  )
+  (
+    < LEFT_BRACKET >
+    	ifContext = getPriority(ifContext)
+    <RIGHT_BRACKET>
+  )
+  
+	{
+	  return ifContext;	}
+}
+
+IfContext getPriority(IfContext ifContext):
+{
+  Token minus = null, priority = null;
+}
+{
+	"Priority:" (minus = <HYPHEN>)*  (priority = <DIGIT>)* 
+	{
+	  	if(minus != null) {
+			ifContext.setPriority(-1 * Integer.valueOf(priority.toString()));
+	  	} else {
+			ifContext.setPriority(Integer.valueOf(priority.toString()));
+	  	}
+		return ifContext;
+	}
+}
+
+TimeOfDay calendar():
+{
+  TimeOfDay timeOfDay = new TimeOfDay();
+}
+{
+	< LEFT_BRACKET >( (timeOfDay()|dayOfWeek())("AND" (timeOfDay()|dayOfWeek()))* )< RIGHT_BRACKET >
+	<LEFT_BRACKET> <PRIORITY>(<DIGIT >)*<RIGHT_BRACKET>
+	{		return timeOfDay;
+	}
+}
+
+TimeOfDay timeOfDay():
+{
+  TimeOfDay timeOfDay = new TimeOfDay();
+  String value = "";
+}
+{
+ < LEFT_BRACKET >"time"< LEFT_BRACKET >symbol()< COMMA >(value =  floatValue())*
+ < RIGHT_BRACKET >< RIGHT_BRACKET >
+
+ {
+   timeOfDay.setTimeOfDay(value);
+   return timeOfDay;  }
+}
+void dayOfWeek():
+{
+}
+{
+  ( "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday" )
+}
+String  sensor():
+{
+  String auxiliar = "";
+  Token name;
+}
+{
+      ( name = <DIGIT>
+	 {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <ALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <UNDERSCORE> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <CAPSALPHABET> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <LEFT_BRACKET> {
+	   auxiliar = auxiliar + name.toString();
+	   auxiliar = openBracket();
+	 }
+	)+
+	{
+	  return auxiliar;	}
+}
+
+void quantitativeCondition():
+{
+}
+{
+  (< LEFT_BRACKET>symbol()< COMMA >quantitativeValue()<RIGHT_BRACKET >)
+}
+
+void symbol():
+{
+}
+{
+  (
+    (<EQUAL>)
+    |(<LESS_THAN>)
+    |(<MORE_THAN>)
+    |(<EQ_LESS_THAN>)
+    | (<EQ_MORE_THAN >)
+
+  )
+  
+}
+
+String quantitativeValue():
+{
+  String auxiliar = "";
+  Token name;
+}
+{
+          ( name = <HYPHEN>
+	 {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <DIGIT> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <POINT> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	)+
+	{
+	  return auxiliar;
+	}
+}
+
+String floatValue():
+{
+  String auxiliar = "";
+  Token name;
+}
+{
+     
+	(	   name = <DIGIT> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	 | name = <POINT> {
+	   auxiliar = auxiliar + name.toString();
+	 }
+	)+
+	{
+	  return auxiliar;
+	}
+}
+
+
+void qualitativeCondition():
+{
+}
+{
+  "after"
+}
+
+void compositeCondition():
+{
+}
+{
+ 	conditionSet()
+ 	| (<ANDPERSAND> conditionSet() )* 
+}
+
+void conditionSet():
+{
+}
+{
+ attribute()<COMMA>(primitiveQualitativeCondition()|primitiveQuantitativeCondition())
+}
+
+
+ThenDo doAction():{  Token t;
+  ThenDo thenDo = new ThenDo();}{  <THEN><DO><LEFT_BRACKET > ((<SIMPLE>|<UNORDERED>)|(< HYPHEN >< HYPHEN >))< COMMA > (actionSet()|< END >) (< RIGHT_BRACKET >)* < COMMA > timeConstant()  then()	{
+		return thenDo;
+	}
+}
+
+
+void then():
+{
+
+}
+{
+   <WHEN>(
+   (< HYPHEN ><HYPHEN >)
+   |( timeConstant() < EQUAL > timeConstant() (<PLUS >(floatValue())* )* < ALPHABET >< POINT >))
+}

@@ -1,4 +1,4 @@
-package edu.casetools.lfpubs2m.lfpubsdata.Condition.time;
+package edu.casetools.lfpubs2m.lfpubsdata.condition.time;
 
 public class TimeBound {
 	
