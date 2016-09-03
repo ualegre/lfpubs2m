@@ -1,0 +1,9 @@
+mreasoner/target/*
+!mreasoner/target/mreasoner-*.jar
+mreasoner/target/mreasoner-*-javadoc.jar
+mreasoner/target/mreasoner-*-sources.jar
+mreasoner/src/main/resources
+mreasoner/.settings
+mreasoner/src/test
+/sonar-project.properties
+/.sonar/
