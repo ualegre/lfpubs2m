@@ -1,4 +1,4 @@
-package edu.casetools.lfpubs2m.lfpubsdata.Condition.sensor;
+package edu.casetools.lfpubs2m.lfpubsdata.condition.sensor;
 
 import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
 

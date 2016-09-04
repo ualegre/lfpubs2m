@@ -7,8 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
-import edu.casetools.lfpubs2m.lfpubsdata.Condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
 import edu.casetools.lfpubs2m.translation.ContextTranslator;
 import edu.casetools.lfpubs2m.translation.DoTranslator;

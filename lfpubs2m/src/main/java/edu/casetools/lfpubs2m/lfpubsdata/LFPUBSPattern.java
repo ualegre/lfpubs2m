@@ -2,10 +2,10 @@ package edu.casetools.lfpubs2m.lfpubsdata;
 
 import java.util.Vector;
 
-import edu.casetools.lfpubs2m.lfpubsdata.Condition.IfContext;
-import edu.casetools.lfpubs2m.lfpubsdata.Condition.sensor.SensorBound;
-import edu.casetools.lfpubs2m.lfpubsdata.Condition.time.TimeBound;
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
 import edu.casetools.lfpubs2m.reader.Syntax;
