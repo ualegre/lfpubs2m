@@ -4,7 +4,7 @@ public class Syntax {
 	
 	public final static boolean SYNTAX_DEBUG = true;
 	/*General Signs declaration*/
-	public final static String NEGATIVE_SIGN       = "#";
+	public final static String NEGATIVE_SIGN       = "¬";
 	public final static String AND_SIGN      	   = "&";
 	public final static String GENERIC_SEPARATOR   = ",";
 	public final static String GENERIC_STOP        = ".";
