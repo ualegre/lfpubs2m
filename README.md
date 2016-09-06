@@ -4,7 +4,7 @@ A Java project that enables the translation of rules from the LFPUBS (Learning F
 tool to the M reasoning language.
 
 ## Download
-* [Version 0.0.1](https://github.com/ualegre/lfpubs2m)
+* [Version 0.0.2](https://github.com/ualegre/lfpubs2m)
 * Other Versions
 
 ### Third party libraries and icons
@@ -15,7 +15,7 @@ tool to the M reasoning language.
 * see [LICENSE](https://github.com/ualegre/lfpubs2m/blob/master/LICENSE.md) file
 
 ## Version 
-* Version 0.0.1
+* Version 0.0.2
 
 ## How-to use this code
 * see [INSTRUCTIONS](https://github.com/ualegre/lfpubs2m/blob/master/INSTRUCTIONS.md) file
