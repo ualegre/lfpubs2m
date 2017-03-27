@@ -16,8 +16,8 @@ public class Syntax {
 
 	public static enum RuleType {SAME_TIME_RULE,NEXT_TIME_RULE};
 	/*Elements declaration syntax*/
-	
-	public final static String DAYOFWEEK_START              ="DayOfWeek (=,";
+	public final static String DAYOFWEEK_PATTERN_STOP		="\\)";
+	public final static String DAYOFWEEK_START              ="DayOfWeek(=,";
 	public final static String DAYOFWEEK_STOP				="\\)";
 	public final static String DAYOFWEEK					="DayOfWeek\\(=,(.*?)"+DAYOFWEEK_STOP;
 	

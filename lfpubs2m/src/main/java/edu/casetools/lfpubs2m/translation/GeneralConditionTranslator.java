@@ -17,7 +17,7 @@ public class GeneralConditionTranslator {
 	}
 	
 	public GeneralCondition readDayOfWeek(String line, GeneralCondition generalCondition){
-		p=Pattern.compile(Syntax.DAYOFWEEK_START+Syntax.DAYOFWEEK_STOP);
+		p=Pattern.compile(Syntax.DAYOFWEEK+Syntax.DAYOFWEEK_STOP);
 		m=p.matcher(line);
 		if(m.find()){
 			generalCondition.setDayOfWeek(m.group(1));
