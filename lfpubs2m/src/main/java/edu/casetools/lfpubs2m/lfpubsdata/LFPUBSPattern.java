@@ -159,13 +159,20 @@ public class LFPUBSPattern {
 			pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId();
 			if(i==0)j++;
 		}
-		pattern = pattern + " ) => "+" EPAS_"+id+" ). \n"; //EPAS: EVENT PATTERN ACHIEVEMENT STATE
 		if(events.size()>0) pattern = pattern +" ssr( ( ";
 		for(int i=0;i<events.size();i++){
+			if(events.size()==1){
 			pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
 		}
+			else{
+				pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
+				pattern = pattern +" ssr( ( ";
+			}
+		}
 		return pattern;
-	}
+}
+
+
 	
 	private String printActionRules(){
 		String pattern = "",auxiliar_pattern = "";

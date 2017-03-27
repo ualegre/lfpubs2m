@@ -6,12 +6,14 @@ package edu.casetools.lfpubs2m.reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
 import edu.casetools.lfpubs2m.translation.ContextTranslator;
 import edu.casetools.lfpubs2m.translation.DoTranslator;
+import edu.casetools.lfpubs2m.translation.GeneralConditionTranslator;
 import edu.casetools.lfpubs2m.translation.OccursTranslator;
 
 
@@ -22,16 +24,23 @@ public class LFPUBSPatternReader {
 	private OccursTranslator occursTranslator;
 	private DoTranslator doTranslator;
 	private ContextTranslator ifContextTranslator;
+	private GeneralConditionTranslator GeneralConditionTranslator;
 	
 	public LFPUBSPatternReader(boolean debug){
 		 occursTranslator 	 = new OccursTranslator();
 		 ifContextTranslator = new ContextTranslator(debug);
 		 doTranslator     	 = new DoTranslator();
+		 GeneralConditionTranslator=new GeneralConditionTranslator();
 	}
 	
-	public LFPUBSPattern interpretCommand(LFPUBSPattern pattern,String line, Syntax.CommandType commandType){
+	public LFPUBSPattern interpretCommand(LFPUBSPattern pattern,String line, Syntax.CommandType commandType, GeneralCondition generalCondition){
 		line = line.replaceAll("\\s","");
 		switch(commandType){
+			case DAYOFWEEK:
+				p=Pattern.compile(Syntax.DAYOFWEEK);
+				m=p.matcher(line);
+				generalCondition.setGeneralCondition(interpretGeneralCondition(line));
+				break;
 			case ACTION_PATTERN_ID:
 				p = Pattern.compile( Syntax.ACTION_PATTERN_ID_PATTERN );
 				m = p.matcher(line); 
@@ -51,6 +60,8 @@ public class LFPUBSPatternReader {
 		}
 		return pattern;
 	}
+
+	
 
 	private ThenDo interpretThenDo(String line) {
 		ThenDo thenDo = new ThenDo();
@@ -85,6 +96,17 @@ public class LFPUBSPatternReader {
 	}
 
 	
-	
+	private GeneralCondition interpretGeneralCondition(String line) {
+		GeneralCondition generalCondition=new GeneralCondition();
+		try{
+		generalCondition=GeneralConditionTranslator.readDayOfWeek 		(line, generalCondition);
+		generalCondition=GeneralConditionTranslator.readTimeOfDaySmall	(line, generalCondition);
+		generalCondition=GeneralConditionTranslator.readTimeOfDayBig	(line, generalCondition);
+		}
+		catch(NullPointerException e){
+		}
+		
+		return generalCondition;
+	}
 
 }

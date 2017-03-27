@@ -11,6 +11,7 @@ import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
 import edu.casetools.lfpubs2m.reader.LFPUBSPatternReader;
 import edu.casetools.lfpubs2m.reader.Syntax;
 import edu.casetools.lfpubs2m.reader.Syntax.CommandType;
+import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 
 
 public class LFPUBS2MTranslator {
@@ -48,6 +49,7 @@ public class LFPUBS2MTranslator {
 		Vector<LFPUBSPattern> patterns = new Vector<LFPUBSPattern>();
 	    LFPUBSPattern auxiliarPattern = new LFPUBSPattern();
 		CommandType commandType = CommandType.EMPTY;
+		GeneralCondition generalCondition=new GeneralCondition();
 	
 		String line;
 		try {
@@ -57,6 +59,9 @@ public class LFPUBS2MTranslator {
 			while(line != null){
 				line = line.replaceAll("\\s","");
 				if(debug)System.out.println(""+line);
+				if(line.contains(Syntax.DAYOFWEEK_START)){
+					commandType=CommandType.DAYOFWEEK;
+				}
 				if( line.contains( Syntax.ACTION_PATTERN_ID_START ) ){
 					commandType = CommandType.ACTION_PATTERN_ID;
 				}
@@ -69,7 +74,7 @@ public class LFPUBS2MTranslator {
 				if( line.contains( Syntax.THEN_DO_START ) ){
 					commandType = CommandType.THEN_DO;
 				}
-				auxiliarPattern   = inputInterpreter.interpretCommand(auxiliarPattern, line, commandType);
+				auxiliarPattern   = inputInterpreter.interpretCommand(auxiliarPattern, line, commandType, generalCondition);
 				if( commandType.equals(CommandType.THEN_DO) ){
 					patterns.add(auxiliarPattern);
 					auxiliarPattern = new LFPUBSPattern();
