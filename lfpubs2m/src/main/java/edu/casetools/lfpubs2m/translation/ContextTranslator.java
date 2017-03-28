@@ -3,10 +3,12 @@ package edu.casetools.lfpubs2m.translation;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.ContextSensor;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
 import edu.casetools.lfpubs2m.reader.Syntax;
 
 
@@ -39,8 +41,12 @@ public class ContextTranslator {
 	
 	public IfContext checkOR(String line,IfContext ifContext){
 	    separateDataOR = line.split(Syntax.IF_CONTEXT_FIRST_SEPARATOR); 
-	    if(separateDataOR.length > 0 && line.contains(Syntax.IF_CONTEXT_FIRST_SEPARATOR)) ifContext = multipleOR( ifContext, separateDataOR );
-	    else 					      ifContext = hasNoOR( ifContext, line );	
+	    if(separateDataOR.length > 0 && line.contains(Syntax.IF_CONTEXT_FIRST_SEPARATOR)) {
+	    	ifContext = multipleOR( ifContext, separateDataOR );
+	    	}
+	    else {
+	    	ifContext = hasNoOR( ifContext, line );	
+	    	}
 		return ifContext;
 	}
 	
@@ -52,13 +58,19 @@ public class ContextTranslator {
 	}
 	
 	public IfContext multipleOR(IfContext ifContext, String[] separateOR){
+		int max=-2;
+		int pos=0;
 	    for(int i = 0;i<separateOR.length;i++){	
+	    	if(getPriority(separateOR[i])>max){
+	    		max=getPriority(separateOR[i]);
+	    		pos=i;
+	    	}
+	    }
+	    	
 	    	//System.out.println("LEO OR:"+separateOR[i]);
 	    	if(debug)System.out.println("----TIME BOUND-----");
-	    	ifContext = checkAND(ifContext,separateOR[i]);
+	    	ifContext = checkAND(ifContext,separateOR[pos]);
 	    	if(debug)System.out.println("-------------------");
-	    }
-	
 		return ifContext;
 	}
 	public IfContext checkAND(IfContext ifContext, String line){
@@ -247,6 +259,35 @@ public class ContextTranslator {
 			return true;
 		}
 		return false;
+	}
+
+	public IfContext setContext(IfContext ifContext, GeneralCondition generalCondition) {
+		String smallTime=generalCondition.getTimeOfDaySmall();
+		String bigTime=generalCondition.getTimeOfDayBig();
+		int priority=2;
+		
+		TimeOfDay SmallTime=setTimeOfDayNotClockFormat(smallTime, String.valueOf(0));
+		
+		TimeOfDay BigTime=setTimeOfDayNotClockFormat(bigTime,String.valueOf(1));
+		
+		TimeBound timeBound=new TimeBound(SmallTime, BigTime, priority);
+		ifContext.addCalendarBound(timeBound);
+		
+		return ifContext;
+	}
+	public TimeOfDay setTimeOfDayNotClockFormat(String clockformat, String higher){
+		TimeOfDay timeofDay=new TimeOfDay();
+		String [] clockFormat=clockformat.split(":");
+		timeofDay.setHour(clockFormat[0]);
+		timeofDay.setMinute(clockFormat[1]);
+		timeofDay.setSecond(clockFormat[2]);
+		if(higher.compareTo("1")==0){
+			timeofDay.setHigherThan(false);
+		}
+		else{
+			timeofDay.setHigherThan(true);
+		}
+		return timeofDay;
 	}
 	
 	

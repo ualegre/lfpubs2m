@@ -11,7 +11,11 @@ public class TimeBound {
 		until = null;
 		priority = 0;
 	}
-	
+	public TimeBound(TimeOfDay since, TimeOfDay until, int priority){
+		this.priority=priority;
+		this.since=since;
+		this.until=until;
+	}
 	
 	
 	public int getPriority() {
