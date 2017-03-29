@@ -5,6 +5,7 @@ import java.util.Vector;
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
@@ -18,6 +19,7 @@ public class LFPUBSPattern {
 	Vector<TimeBound> calendar_context;
 	Vector<SensorBound> sensor_context;
 	Vector<Sensor> consequences;
+	Vector<DayBound> day_context;
 	
 	String delay;
 	
@@ -26,12 +28,14 @@ public class LFPUBSPattern {
 		calendar_context	 = new Vector<TimeBound>();
 		sensor_context		 = new Vector<SensorBound>();
 		consequences  		 = new Vector<Sensor>();
+		day_context			 = new Vector<DayBound>();
 	//	actions 	= new Vector<Action>();
 	}
 
 	public void setContext(IfContext context){
 		this.calendar_context = context.getTimeBound();
 		this.sensor_context   = context.getSensorBound();
+		this.day_context	  = context.getDayBound();
 	}
 	
 	public void setEvent(Occurs occurs) {
@@ -82,6 +86,8 @@ public class LFPUBSPattern {
 		String pattern = "";
 		pattern = printCalendarContextRules(pattern);
 		pattern = printCalendarContextRulesNegation(pattern);
+		pattern = printDayContextRules(pattern);
+		pattern = printDayContextRulesNegation(pattern);
 //		if(sensor_context.size()>0){
 //			for(int i=0;i<sensor_context.size();i++){
 //				if(i!=0) pattern = pattern +" , ";
@@ -96,7 +102,24 @@ public class LFPUBSPattern {
 //		}
 		return pattern;
 	}
-	
+	private String printDayContextRules(String pattern){
+		for(int i=0;i<day_context.size();i++){
+			pattern=pattern+ " ssr( ( ";
+			pattern=printFullDayContext(pattern,day_context.get(i));
+			pattern = pattern + " ) => day_context_"+id+" ). \n";
+		}
+		return pattern;
+	}
+	private String printDayContextRulesNegation(String pattern){
+		if(day_context.size()>0) pattern = pattern + " ssr( ( ";
+		for(int i=0;i<day_context.size();i++){
+			pattern = pattern + Syntax.NEGATIVE_SIGN;
+			pattern=printFullDayContext(pattern,day_context.get(i));
+		
+		if(i == (day_context.size()-1) ) pattern = pattern + " ) => "+Syntax.NEGATIVE_SIGN+"day_context"+id+" ). \n";
+		}
+		return pattern;
+	}
 
 	private String printCalendarContextRules(String pattern) {
 		for(int i=0;i<calendar_context.size();i++){
@@ -138,6 +161,10 @@ public class LFPUBSPattern {
 			}
 			return pattern;
 		}
+		private String printFullDayContext(String pattern, DayBound bound){
+			pattern=pattern+"weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")";
+			return pattern;
+		}
 		
 		private String printHalfCalendarContextRules(String pattern,TimeBound bound){
 			if(bound.getSince().isHigherThan()){
@@ -156,18 +183,30 @@ public class LFPUBSPattern {
 		int j = 0;
 		if(events.size()>0) pattern = pattern +" ssr( ( ";
 		for(int i=0;i<events.size();i++){
-			pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId();
-			if(i==0)j++;
+			if(events.size()==1){
+				pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId()+" ) =>EPAS_"+id+" ). \n";
+			}
+				else if(i!=events.size()-1){
+					pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId()+" ) =>EPAS_"+id+" ). \n";
+					pattern = pattern +" ssr( ( ";
+				}
+				else{
+					pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId()+" ) =>EPAS_"+id+" ). \n";
+				}
 		}
 		if(events.size()>0) pattern = pattern +" ssr( ( ";
 		for(int i=0;i<events.size();i++){
 			if(events.size()==1){
-			pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
+			pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) =>"+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
 		}
-			else{
+			else if(i!=events.size()-1){
 				pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
 				pattern = pattern +" ssr( ( ";
 			}
+			else{
+				pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
+			}
+			
 		}
 		return pattern;
 }
@@ -189,6 +228,9 @@ public class LFPUBSPattern {
 		}
 		if( calendar_context.size() > 0 ){
 			auxiliar_pattern = auxiliar_pattern + auxiliar_comma[j]+"calendar_context_"+id;
+		}
+		if(	day_context.size() >0){
+			auxiliar_pattern = auxiliar_pattern + auxiliar_comma[j]+"day_context_"+id;
 		}
 
 		for(int i=0;i<consequences.size();i++){

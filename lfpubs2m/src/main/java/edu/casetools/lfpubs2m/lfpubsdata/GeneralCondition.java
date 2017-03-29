@@ -17,7 +17,7 @@ public class GeneralCondition {
 	}
 public void setDayOfWeek(String dayOfWeek){
 	this.DayOfWeek=dayOfWeek.split(",");
-	System.out.println(DayOfWeek[0]);    ///Esti hau gero aldau
+	//System.out.println(DayOfWeek[0]);    ///Esti hau gero aldau
 	
 }
 public void setTimeDaySmall(String smallTime){

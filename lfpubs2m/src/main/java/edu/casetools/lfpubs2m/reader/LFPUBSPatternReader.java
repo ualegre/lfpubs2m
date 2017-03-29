@@ -3,6 +3,7 @@ package edu.casetools.lfpubs2m.reader;
 
 
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,7 @@ public class LFPUBSPatternReader {
 				if( m.find()) pattern.setId(m.group(1));		
 				break;
 			case IF_CONTEXT:
-				   pattern.setContext( interpretIfContext(line, generalCondition1));
+				pattern.setContext( interpretIfContext(line, generalCondition1));
 				break;
 			case ON_OCCURS:
 					pattern.setEvent( interpretOnOccurs(line) );
@@ -92,12 +93,9 @@ public class LFPUBSPatternReader {
 	
 	private IfContext interpretIfContext(String line, GeneralCondition generalConditions) {
 		IfContext ifContext = new IfContext();
+		ifContext=ifContextTranslator.setContext(ifContext,generalCondition1);
 		ifContext = ifContextTranslator.readContext ( line, ifContext );
-		if((ifContext.getSensorBound().size()==0)&&(ifContext.getTimeBound().size()==0)){
-			ifContext=ifContextTranslator.setContext(ifContext,generalCondition1);
-		}
-	
-		
+				
 		return ifContext;
 	}
 

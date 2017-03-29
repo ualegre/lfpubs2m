@@ -7,8 +7,10 @@ import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.ContextSensor;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayOfWeek;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.reader.Syntax;
 
 
@@ -273,6 +275,11 @@ public class ContextTranslator {
 		TimeBound timeBound=new TimeBound(SmallTime, BigTime, priority);
 		ifContext.addCalendarBound(timeBound);
 		
+		String [] dayOfWeek=generalCondition.getDayOfWeek();
+		String since=dayOfWeek[0];
+		String until=dayOfWeek[dayOfWeek.length-1];
+		DayBound week=new DayBound(since, until);
+		ifContext.addDayBound(week);
 		return ifContext;
 	}
 	public TimeOfDay setTimeOfDayNotClockFormat(String clockformat, String higher){
