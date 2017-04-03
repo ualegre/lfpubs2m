@@ -236,7 +236,9 @@ public class LFPUBSPattern {
 		for(int i=0;i<consequences.size();i++){
 			
 			pattern = pattern + auxiliar_pattern + " ) => " + consequences.get(i).getStatus()+consequences.get(i).getId() +" ). \n";
+			pattern = pattern + auxiliar_pattern + " ) => Pattern " +id+" ).\n";
 		}
+		
 		return pattern;
 	}
 	
