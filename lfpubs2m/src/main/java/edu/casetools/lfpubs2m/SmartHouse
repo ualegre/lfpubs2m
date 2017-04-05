@@ -1,0 +1,103 @@
+states( Corridor,LightBedroom,BedroomDoor,Entrance,Toilet,Kettle,Pattern_1,Pattern_2,Pattern_3,Pattern_4,Pattern_5,Pattern_6,Pattern_7,Pattern_8);
+
+is( #Corridor );
+is( #LightBedroom );
+is( #BedroomDoor );
+is( #Entrance );
+is( #Toilet );
+
+is( Corridor );
+is( LightBedroom );
+is( BedroomDoor );
+is( Entrance );
+is( Toilet );
+
+holdsAt( #Corridor,0 );
+holdsAt( #LightBedroom,0 );
+holdsAt( #BedroomDoor,0 );
+holdsAt( #Entrance,0 );
+holdsAt( #Toilet,0 );
+
+occurs( ingr( LightBedroom ),09:20:03);
+
+ ssr( ( Entrance ) =>EPAS_0 ). 
+ ssr( ( #Entrance ) =>#EPAS_0 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_0 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context0 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_0 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context0 ). 
+ ssr( ( [-][1]EPAS_0 , calendar_context_0 , day_context_0 ) => Corridor ). 
+ ssr( ( [-][1]EPAS_0 , calendar_context_0 , day_context_0 ) => Pattern_0 ).
+
+ ssr( ( Toilet ) =>EPAS_1 ). 
+ ssr( ( #Toilet ) =>#EPAS_1 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_1 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context1 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_1 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context1 ). 
+ ssr( ( [-][0]EPAS_1 , calendar_context_1 , day_context_1 ) => Entrance ). 
+ ssr( ( [-][0]EPAS_1 , calendar_context_1 , day_context_1 ) => Pattern_1 ).
+
+ ssr( ( Corridor ) =>EPAS_2 ). 
+ ssr( ( #Corridor ) =>#EPAS_2 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_2 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context2 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_2 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context2 ). 
+ ssr( ( [-][5]EPAS_2 , calendar_context_2 , day_context_2 ) => Toilet ). 
+ ssr( ( [-][5]EPAS_2 , calendar_context_2 , day_context_2 ) => Pattern_2 ).
+
+ ssr( ( Entrance ) =>EPAS_3 ). 
+ ssr( ( #Entrance ) =>#EPAS_3 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_3 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context3 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_3 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context3 ). 
+ ssr( ( [-][0]EPAS_3 , calendar_context_3 , day_context_3 ) => Corridor ). 
+ ssr( ( [-][0]EPAS_3 , calendar_context_3 , day_context_3 ) => Pattern_3 ).
+
+ ssr( ( BedroomDoor ) =>EPAS_4 ). 
+ ssr( ( #BedroomDoor ) =>#EPAS_4 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_4 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context4 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_4 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context4 ). 
+ ssr( ( [-][5]EPAS_4 , calendar_context_4 , day_context_4 ) => Entrance ). 
+ ssr( ( [-][5]EPAS_4 , calendar_context_4 , day_context_4 ) => Pattern_4 ).
+
+ ssr( ( BedroomDoor ) =>EPAS_5 ). 
+ ssr( ( #BedroomDoor ) =>#EPAS_5 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_5 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context5 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_5 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context5 ). 
+ ssr( ( [-][20]EPAS_5 , calendar_context_5 , day_context_5 ) => BedroomDoor ). 
+ ssr( ( [-][20]EPAS_5 , calendar_context_5 , day_context_5 ) => Pattern_5 ).
+
+ ssr( ( LightBedroom ) =>EPAS_6 ). 
+ ssr( ( #LightBedroom ) =>#EPAS_6 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_6 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context6 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_6 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context6 ). 
+ ssr( ( [-][20]EPAS_6 , calendar_context_6 , day_context_6 ) => BedroomDoor ). 
+ ssr( ( [-][20]EPAS_6 , calendar_context_6 , day_context_6 ) => Pattern_6 ).
+
+ ssr( ( LightBedroom ) =>EPAS_7 ). 
+ ssr( ( #LightBedroom ) =>#EPAS_7 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_7 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context7 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_7 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context7 ). 
+ ssr( ( [-][180]EPAS_7 , calendar_context_7 , day_context_7 ) => LightBedroom ). 
+ ssr( ( [-][180]EPAS_7 , calendar_context_7 , day_context_7 ) => Pattern_7 ).
+
+
+ ssr( ( Corridor ) =>EPAS_9 ). 
+ ssr( ( #Corridor ) =>#EPAS_9 ). 
+ ssr( ( clockBetween(09:18:07-09:25:10) ) => calendar_context_9 ). 
+ ssr( ( #clockBetween(09:18:07-09:25:10) ) => #calendar_context9 ). 
+ ssr( ( weekDayBetween(Tuesday-Monday) ) => day_context_9 ). 
+ ssr( ( #weekDayBetween(Tuesday-Monday) ) => #day_context9 ). 
+ ssr( ( [-][141]EPAS_9 , calendar_context_9 , day_context_9 ) => Kettle ). 
+ ssr( (Pattern_0,Pattern_1,Pattern_2,Pattern_3,Pattern_4,Pattern_5,Pattern_6,Pattern_7,Pattern_8 )=> Kettle ).

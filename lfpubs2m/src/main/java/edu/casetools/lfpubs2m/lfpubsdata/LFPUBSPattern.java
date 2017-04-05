@@ -20,6 +20,10 @@ public class LFPUBSPattern {
 	Vector<SensorBound> sensor_context;
 	Vector<Sensor> consequences;
 	Vector<DayBound> day_context;
+	int number;
+	String actuator;
+	int size;
+	String str="states (";
 	
 	String delay;
 	
@@ -29,6 +33,8 @@ public class LFPUBSPattern {
 		sensor_context		 = new Vector<SensorBound>();
 		consequences  		 = new Vector<Sensor>();
 		day_context			 = new Vector<DayBound>();
+		number 				 = 0; 
+		size				 = 10;
 	//	actions 	= new Vector<Action>();
 	}
 
@@ -60,6 +66,46 @@ public class LFPUBSPattern {
 	}
 
 
+	public Vector<Sensor> getEvents() {
+		return events;
+	}
+
+	public Vector<TimeBound> getCalendar_context() {
+		return calendar_context;
+	}
+
+	public Vector<SensorBound> getSensor_context() {
+		return sensor_context;
+	}
+
+	public Vector<Sensor> getConsequences() {
+		return consequences;
+	}
+
+	public Vector<DayBound> getDay_context() {
+		return day_context;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public String getActuator() {
+		return actuator;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public String getDelay() {
+		return delay;
+	}
+
 	public Vector<Sensor> getConsequence() {
 		return consequences;
 	}
@@ -72,7 +118,7 @@ public class LFPUBSPattern {
 	public String printPattern(){
 		String pattern = "";
 
-		if( ( events.size() > 0 ) || ( sensor_context.size() > 0 ) || ( calendar_context.size() > 0 ) ){
+		if( ( events.size() > 0 ) && ( consequences.size()>0)){
 			
 			pattern = printEventRules();
 			pattern = pattern + printContextRules();
@@ -214,6 +260,8 @@ public class LFPUBSPattern {
 
 	
 	private String printActionRules(){
+		actuator="Kettle";
+		String act="";
 		String pattern = "",auxiliar_pattern = "";
 		String auxiliar_comma[] = {""," , "};
 		int j = 0;
@@ -234,12 +282,38 @@ public class LFPUBSPattern {
 		}
 
 		for(int i=0;i<consequences.size();i++){
+			if(consequences.get(i).getId().contains(actuator)==true){
+				pattern = pattern + auxiliar_pattern + " ) => " + consequences.get(i).getStatus()+consequences.get(i).getId() +" ). \n";
+				actuator=consequences.get(i).getId();
+				for(int z=0;z<Integer.valueOf(id);z++){
+					if(z!=Integer.valueOf(id)-1==true){
+					act=act+"Pattern_"+z+",";
+				}
+					else{
+						act=act+"Pattern_"+z;
+					}
+				}
+				pattern = pattern + " ssr( ("+act+" )=> "+actuator+" ).\n";
+				
+			}
+			else{
 			
 			pattern = pattern + auxiliar_pattern + " ) => " + consequences.get(i).getStatus()+consequences.get(i).getId() +" ). \n";
-			pattern = pattern + auxiliar_pattern + " ) => Pattern " +id+" ).\n";
+			pattern = pattern + auxiliar_pattern + " ) => Pattern_"+id+" ).\n";
+			
 		}
-		
+			
+		}
+	
 		return pattern;
 	}
+	public String writeStructure(String str){
+		for(int i=0;i<events.size();i++){
+		str= str+events.get(i).getId()+",";
+
+	}
+		return str;
+	}
+
 	
 }
