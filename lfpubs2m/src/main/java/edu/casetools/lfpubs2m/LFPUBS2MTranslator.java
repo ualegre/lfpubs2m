@@ -125,9 +125,9 @@ public class LFPUBS2MTranslator {
 			result = result + "___________________________________\n";
 			result = result + "Pattern ID: "+patterns.get(i).getId()+"\n";
 			result = result + ""+patterns.get(i).printPattern()+"\n";
-			//states=states+""+patterns.get(i).writeStructure(states);
+			states=states+""+patterns.get(i).writeStructure(states);
 		}
-		//result= result+ states;
+		result= result+ states;
 		return result;
 	}
 	private void writeResults(Vector<LFPUBSPattern> patterns, String actuator){
@@ -371,7 +371,7 @@ public class LFPUBS2MTranslator {
 			DayBound bound=day_context.get(i);
 				writer.print("weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")");
 				if(i == (day_context.size()-1) ){
-					writer.println( " ) => day_context_"+id+" );" );
+					writer.println( " ) -> day_context_"+id+" );" );
 			}
 	}
 	}
@@ -381,14 +381,10 @@ public class LFPUBS2MTranslator {
 			DayBound bound=day_context.get(i);
 				writer.print(Syntax.NEGATIVE_SIGN+"weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")");
 				if(i == (day_context.size()-1) ){
-					writer.println( " ) => "+Syntax.NEGATIVE_SIGN+"day_context_"+id+" );" );
+					writer.println( " ) -> "+Syntax.NEGATIVE_SIGN+"day_context_"+id+" );" );
 				}
 			}
 	}
-	
-	
-				
-
 	public void close(){
 		try {
 			
