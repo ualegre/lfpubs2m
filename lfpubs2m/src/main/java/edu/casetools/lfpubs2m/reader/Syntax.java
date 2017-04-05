@@ -12,10 +12,23 @@ public class Syntax {
 	public final static String FALSE	           = "0";
 
 	
-	public static enum CommandType { EMPTY,ACTION_PATTERN_ID,ON_OCCURS,IF_CONTEXT,THEN_DO};
+	public static enum CommandType { EMPTY,ACTION_PATTERN_ID,ON_OCCURS,IF_CONTEXT,THEN_DO, DAYOFWEEK,TIMEOFDAYSMALL,TIMEOFDAYBIG};
 
 	public static enum RuleType {SAME_TIME_RULE,NEXT_TIME_RULE};
 	/*Elements declaration syntax*/
+	public final static String DAYOFWEEK_PATTERN_STOP		="\\)";
+	public final static String DAYOFWEEK_START              ="DayOfWeek(=,";
+	public final static String DAYOFWEEK_STOP				="\\)";
+	public final static String DAYOFWEEK					="DayOfWeek\\(=,(.*?)"+DAYOFWEEK_STOP;
+	
+	public final static String TIMEOFDAYSMALL_START				="TimeOfDay(>,";
+	public final static String TIMEOFDAYSMALL_STOP				="\\)";
+	public final static String TIMEOFDAYSMALL					="TimeOfDay\\(>,(.*?)"+TIMEOFDAYSMALL_STOP;
+	
+	public final static String TIMEOFDAYBIG_START				="TimeOfDay(<,";
+	public final static String TIMEOFDAYBIG_STOP				="\\)";
+	public final static String TIMEOFDAYBIG						="TimeOfDay\\(<,(.*?)"+TIMEOFDAYBIG_STOP;
+	
 	
 	public final static String ACTION_PATTERN_ID_START       = "(ActionPattern";
 	public final static String ACTION_PATTERN_ID_STOP        = ")";
