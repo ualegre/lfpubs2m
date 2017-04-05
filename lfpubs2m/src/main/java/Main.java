@@ -6,7 +6,7 @@ public class Main {
 		System.out.println("Initializing...");
 		LFPUBS2MTranslator translator = new LFPUBS2MTranslator(true);
 		System.out.println("- - - - - - - - - - - - - - - - - - -");
-		System.out.println(""+translator.getTranslation("/Users/mdx/git/lfpubs2m/lfpubs2m/results/resultLLPUBS.txt"));
+		System.out.println(""+translator.getTranslation("./examples/LFPUBS_Output_0.txt")); //Select an LFPUBS output file
 		System.out.println("- - - - - - - - - - - - - - - - - - -");
 		System.out.println("Ending...");
 	}

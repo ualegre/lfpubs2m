@@ -1,9 +1,10 @@
-mreasoner/target/*
-!mreasoner/target/mreasoner-*.jar
-mreasoner/target/mreasoner-*-javadoc.jar
-mreasoner/target/mreasoner-*-sources.jar
-mreasoner/src/main/resources
-mreasoner/.settings
-mreasoner/src/test
+lfpubs2m/target/*
+lfpubs2m/target/mreasoner-*-javadoc.jar
+lfpubs2m/target/mreasoner-*-sources.jar
+lfpubs2m/src/main/resources
+lfpubs2m/.settings
+lfpubs2m/.classpath
+lfpubs2m/.project
+lfpubs2m/src/test
 /sonar-project.properties
 /.sonar/
