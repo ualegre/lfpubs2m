@@ -46,6 +46,7 @@ public class LFPUBS2MTranslator {
 		this.fileName = fileName;
 	}
 	
+	
 	public void open (){
 		try {
 			file  		 		     = new File          (  fileName  );
@@ -57,6 +58,48 @@ public class LFPUBS2MTranslator {
 		}		
 	}
 	
+	public BufferedReader getBufferedReader() {
+		return bufferedReader;
+	}
+
+	public void setBufferedReader(BufferedReader bufferedReader) {
+		this.bufferedReader = bufferedReader;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public void setFileReader(FileReader fileReader) {
+		this.fileReader = fileReader;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+	
+
+	public File getFile() {
+		return file;
+	}
+
+	public FileReader getFileReader() {
+		return fileReader;
+	}
+
+	public LFPUBSPatternReader getInputInterpreter() {
+		return inputInterpreter;
+	}
+
+	public HashMap<String, Integer> getStates() {
+		return states;
+	}
+	
+
+	public boolean isDebug() {
+		return debug;
+	}
+
 	public Vector<LFPUBSPattern> readPatterns() {
 		Vector<LFPUBSPattern> patterns = new Vector<LFPUBSPattern>();
 	    LFPUBSPattern auxiliarPattern = new LFPUBSPattern();
@@ -117,7 +160,7 @@ public class LFPUBS2MTranslator {
 	}
 	
 	private String printPatterns(Vector<LFPUBSPattern> patterns){
-		String actuator="Kettle";
+		String actuator="Kettle_0";
 		writeResults(patterns, actuator);
 		String result = "";
 		String states="";
@@ -132,7 +175,7 @@ public class LFPUBS2MTranslator {
 	}
 	private void writeResults(Vector<LFPUBSPattern> patterns, String actuator){
 		try{
-			BufferedWriter bw = new BufferedWriter(new FileWriter("lfpubs2m.txt"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter("lfpubs2m.mtpl"));
 			PrintWriter writer = new PrintWriter(bw);	
 			for(int i=0;i<patterns.size();i++){
 				writedoc(patterns.get(i),writer, actuator);
@@ -146,6 +189,16 @@ public class LFPUBS2MTranslator {
 			System.out.println("Error Message: " + error.getMessage());
 		}
 	}
+	//---------------------------------------------------------------------------------------------//
+	//All the states have been saved in a HashMap and taking into account the nature of each states
+	//different values have been settled.
+	//			Dependent states	=	(id, 1)
+	//			Context_positive	=	(id, 2)
+	//			Context_negative	=	(id, -2)
+	//			Independent_posi	=	(id, 0)
+	//			Independent_posi	=	(id, -1)
+	//---------------------------------------------------------------------------------------------//
+
 	public void writedoc(LFPUBSPattern pattern, PrintWriter writer, String actuator){
 		if((pattern.getEvents().size()>0)&&(pattern.getConsequence().size()>0)){
 			writeEvents(pattern.getEvents(), pattern.getId(),writer);
@@ -156,25 +209,25 @@ public class LFPUBS2MTranslator {
 			writeDayContextRules(pattern.getDay_context(), pattern.getId(),writer);
 			writeDayContextRulesNegatives(pattern.getDay_context(),pattern.getId(),writer);
 			writeAction(pattern.getDelay(),pattern.getId(), pattern.getCalendar_context(),pattern.getEvents(),pattern.getSensor_context(),pattern.getDay_context(),pattern.getConsequences(), writer, actuator);
-			writer.println(newline);
+			writer.println();
 		}
 	}
 	private void writeAction(String delay, String id, Vector<TimeBound> calendar_context,Vector<Sensor> events,Vector<SensorBound>sensor_context, Vector<DayBound>day_context, Vector<Sensor> consequences,PrintWriter writer, String actuator) {
 		int pat=0;
-		writer.print("ssr( (");
+		writer.print(" ssr( (");
 		if(events.size()>0){
-			writer.print("[-]["+delay+"]EPAS_"+id+",");
+			writer.print(" [-]["+delay+"]EPAS_"+id+" ^ ");
 		}
 		if(calendar_context.size()>0){
-			writer.print("calendar_context_"+id+",");
+			writer.print("calendar_context_"+id+" ^ ");
 		}
 		if(sensor_context.size()>0){
-			writer.print("[-]["+delay+"]sensor_context_"+id+",");
+			writer.print("[-]["+delay+"]sensor_context_"+id+" ^ ");
 		}
 		if(day_context.size()>0){
 			writer.print("day_context_"+id);
 		}
-		writer.print(" )->");
+		writer.print(" ) -> ");
 		for(int i=0;i<consequences.size();i++){
 			writer.print(consequences.get(i).getStatus()+consequences.get(i).getId());
 			if(states.containsKey(consequences.get(i).getId())==false){
@@ -197,15 +250,15 @@ public class LFPUBS2MTranslator {
 	}
 	public void writeFinalPattern(PrintWriter writer, String actuator){
 		writer.println();
-		writer.print("ssr( (");
+		writer.print(" ssr( (");
 		Iterator it=states.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
-			if(key.contains("Pattern")==true){
-				writer.print(key+",");
+			if(key.contains("Pattern_")==true){
+				writer.print(key+" ^ ");
 			}
 		}
-		writer.print(" )->Kettle(0) )");
+		writer.print(" ) -> "+actuator+" );");
 	
 	}
 	
@@ -214,11 +267,11 @@ public class LFPUBS2MTranslator {
 		String auxiliar_comma[] = {",",","};
 		int j=0;
 		Iterator it=states.keySet().iterator();
-		writer.print("states( ");
+		writer.print(" states( ");
 		while(it.hasNext()){
 			String key = (String) it.next();
 			if(states.get(key).intValue()>=0){
-			writer.print(key+auxiliar_comma[j]);
+			writer.print(" "+key+auxiliar_comma[j]);
 			if(j==0)j++;
 			
 			}
@@ -233,7 +286,7 @@ public class LFPUBS2MTranslator {
 		while(it.hasNext()){
 			String key = (String) it.next();
 			if(states.get(key).intValue()!=1){
-				writer.print("is( "+key+" );");
+				writer.print(" is( "+key+" );");
 				writer.println();
 				
 				}
@@ -244,35 +297,35 @@ public class LFPUBS2MTranslator {
 		writer.println(newline);
 		while(it.hasNext()){
 			String key = (String) it.next();
-			//if(states.get(key).intValue()!=1){
-				writer.print("holdsAt( "+key+",0 );");
-				writer.println();
+			if(states.get(key).intValue()>=0){
+				writer.println(" holdsAt( "+key+" ,0 );");
 				
 			}
 		}
+	}
 	
 			
 
 	private void writefinalPattern(String delay, Vector<TimeBound> calendar_context, String id,Vector<Sensor> events,Vector<SensorBound>sensor_context, Vector<DayBound>day_context, Vector<Sensor> consequences,PrintWriter writer) {
 		writer.print("");
-		writer.print("ssr( (");
+		writer.print(" ssr( (");
 		if(events.size()>0){
-			writer.print("[-]["+delay+"]EPAS_"+id+",");
+			writer.print(" [-]["+delay+"]EPAS_"+id+" ^ ");
 		}
 		if(calendar_context.size()>0){
-			writer.print("calendar_context_"+id+",");
+			writer.print(" calendar_context_"+id+" ^ ");
 		}
 		if(sensor_context.size()>0){
-			writer.print("[-]["+delay+"]sensor_context_"+id+",");
+			writer.print(" [-]["+delay+"]sensor_context_"+id+" ^ ");
 		}
 		if(day_context.size()>0){
 			writer.print("day_context_"+id);
 		}
-		writer.print(" )-> Pattern_"+id);
+		writer.print(" ) -> Pattern_"+id);
 		writer.print(" );");
 		String Pat="Pattern_"+id;
 		if(states.containsKey(Pat)==false){
-			states.put(Pat, +1);
+			states.put(Pat, 1);
 		}
 		
 	}
@@ -280,14 +333,15 @@ public class LFPUBS2MTranslator {
 	public void writeEvents(Vector<Sensor>events, String id,PrintWriter writer){
 		if(events.size()>0){
 			for(int i=0;i<events.size();i++){
-				writer.println("ssr( ("+events.get(i).getStatus()+events.get(i).getId()+" )->EPAS_"+id+" );");
-				writer.println("ssr( ("+events.get(i).getNegatedStatus()+events.get(i).getId()+" )->"+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" );");
+				writer.println(" ssr( ( "+events.get(i).getStatus()+events.get(i).getId()+" ) -> EPAS_"+id+" );");
+				writer.println(" ssr( ( "+events.get(i).getNegatedStatus()+events.get(i).getId()+" ) -> "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" );");
 				String negindep=events.get(i).getNegatedStatus()+events.get(i).getId();
+				//System.out.println(negindep);
 				if(states.containsKey(events.get(i).getId())==false){
 					states.put(events.get(i).getId(), 0);
 				}
 				
-				else if (states.containsKey(negindep)==false){
+				if (states.containsKey(negindep)==false){
 					states.put(negindep, -1);
 				}
 				String val="EPAS_"+id;
@@ -307,11 +361,11 @@ public class LFPUBS2MTranslator {
 				if(calendar_context.get(i).getUntil()!=null){
 					TimeBound timeBound=calendar_context.get(i);
 					if(timeBound.getSince().isHigherThan()){
-						writer.print("ssr( ( clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getUntil().getTimeOfDayClockFormat()+")");
+						writer.print(" ssr( ( clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getUntil().getTimeOfDayClockFormat()+")");
 						
 					}
 					else{
-						writer.print("ssr( ( clockBetween("+timeBound.getUntil().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
+						writer.print(" ssr( ( clockBetween("+timeBound.getUntil().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
 					}
 					
 				}
@@ -326,7 +380,7 @@ public class LFPUBS2MTranslator {
 					}
 			}
 			}
-			writer.print(" ) ->calendar_context_"+id+" );");
+			writer.print(" ) -> calendar_context_"+id+" );");
 			String context="calendar_context_"+id;
 			//System.out.println(context);
 			if(states.containsKey(context)==false){
@@ -340,25 +394,25 @@ public class LFPUBS2MTranslator {
 			if(calendar_context.get(i).getUntil()!=null){
 				TimeBound timeBound=calendar_context.get(i);
 				if(timeBound.getSince().isHigherThan()){
-					writer.print("ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getUntil().getTimeOfDayClockFormat()+")");
+					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getUntil().getTimeOfDayClockFormat()+")");
 					
 				}
 				else{
-					writer.print("ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getUntil().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
+					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getUntil().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
 				}
 			}
 			else{
 				TimeBound timeBound=calendar_context.get(i);
 				if(timeBound.getSince().isHigherThan()){
-					writer.print("ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+"23:59:59)");
+					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+"23:59:59)");
 					
 				}
 				else{
-					writer.print("ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween(00:00:00"+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
+					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween(00:00:00"+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
 				}	
 		}
 		}
-		writer.print(" ) ->"+Syntax.NEGATIVE_SIGN+"calendar_context_"+id+" );");
+		writer.print(" ) -> "+Syntax.NEGATIVE_SIGN+"calendar_context_"+id+" );");
 		String context=Syntax.NEGATIVE_SIGN+"calendar_context_"+id;
 		if(states.containsKey(context)==false){
 			states.put(context, -2);
@@ -366,24 +420,34 @@ public class LFPUBS2MTranslator {
 		}
 	}
 	public void writeDayContextRules(Vector<DayBound>day_context, String id, PrintWriter writer){
-		writer.print("ssr( ( ");
+		writer.print(" ssr( ( ");
 		for(int i=0;i<day_context.size();i++){
 			DayBound bound=day_context.get(i);
 				writer.print("weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")");
 				if(i == (day_context.size()-1) ){
 					writer.println( " ) -> day_context_"+id+" );" );
+					
 			}
 	}
+		String contextNeg="day_context_"+id;
+		if(states.containsKey(contextNeg)==false){
+			states.put(contextNeg, 2);
+		}
 	}
 	public void writeDayContextRulesNegatives(Vector<DayBound>day_context, String id, PrintWriter writer){
-		writer.print("ssr( ( ");
+		writer.print(" ssr( ( ");
 		for(int i=0;i<day_context.size();i++){
 			DayBound bound=day_context.get(i);
 				writer.print(Syntax.NEGATIVE_SIGN+"weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")");
 				if(i == (day_context.size()-1) ){
 					writer.println( " ) -> "+Syntax.NEGATIVE_SIGN+"day_context_"+id+" );" );
 				}
+				
 			}
+		String contextNeg=Syntax.NEGATIVE_SIGN+"day_context_"+id;
+		if(states.containsKey(contextNeg)==false){
+			states.put(contextNeg, -2);
+		}
 	}
 	public void close(){
 		try {
