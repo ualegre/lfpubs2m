@@ -100,12 +100,22 @@ public class ContextTranslator {
 		
 		String boundData[] = line.split(Syntax.IF_CONTEXT_THIRD_SEPARATOR); 
 		if(boundData.length == 2){
-			timeBound.setSinceString(boundData[1]);
-			timeBound.getSince().setHigherThan(isHigherThan(boundData[0]));
-
-		
-			if(debug)System.out.println("HIGHER THAN: "+timeBound.getSince().isHigherThan());
-			if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getSince().getHour()+":"+timeBound.getSince().getMinute()+":"+timeBound.getSince().getSecond());
+			if(boundData.length == 2){
+				if(isHigherThan(boundData[0])==true){
+				timeBound.setSinceString(boundData[1]);
+				timeBound.getSince().setHigherThan(isHigherThan(boundData[0]));
+				if(debug)System.out.println("HIGHER THAN: "+timeBound.getSince().isHigherThan());
+				if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getSince().getHour()+":"+timeBound.getSince().getMinute()+":"+timeBound.getSince().getSecond());
+				if(debug)System.out.println("");
+				}
+				else{
+					timeBound.setUntilString(boundData[1]);
+					timeBound.getUntil().setHigherThan(isHigherThan(boundData[0]));
+					if(debug)System.out.println("HIGHER THAN: "+timeBound.getUntil().isHigherThan());
+					if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getUntil().getHour()+":"+timeBound.getUntil().getMinute()+":"+timeBound.getUntil().getSecond());
+					if(debug)System.out.println("");
+				}
+			}
 		ifContext.addCalendarBound(timeBound);
 		}
 		return ifContext;
@@ -216,33 +226,50 @@ public class ContextTranslator {
 		return ifContext;
 	}
 
-	private IfContext translateMultipleCalendar(IfContext ifContext,
-			String line[]) {	
-//		System.out.println("LLEGOO!!");
+	private IfContext translateMultipleCalendar(IfContext ifContext,String line[]) {	
+
 		TimeBound timeBound = new TimeBound();
-		timeBound.setPriority(getPriority(line[1]));
-//		
+		timeBound.setPriority(getPriority(line[1]));	
 		if(debug)System.out.println("PRIORITY: "+timeBound.getPriority());
 		line[1] = removePriority(timeBound.getPriority(),line[1]);
 
 			String boundDataSince[] = line[0].split(Syntax.IF_CONTEXT_THIRD_SEPARATOR); 
 			if(boundDataSince.length == 2){
+				if(isHigherThan(boundDataSince[0])==true){
 				timeBound.setSinceString(boundDataSince[1]);
 				timeBound.getSince().setHigherThan(isHigherThan(boundDataSince[0]));
+				if(debug)System.out.println("HIGHER THAN: "+timeBound.getSince().isHigherThan());
+				if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getSince().getHour()+":"+timeBound.getSince().getMinute()+":"+timeBound.getSince().getSecond());
+				if(debug)System.out.println("");
+				}
+				else{
+					timeBound.setUntilString(boundDataSince[1]);
+					timeBound.getUntil().setHigherThan(isHigherThan(boundDataSince[0]));
+					if(debug)System.out.println("HIGHER THAN: "+timeBound.getUntil().isHigherThan());
+					if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getUntil().getHour()+":"+timeBound.getUntil().getMinute()+":"+timeBound.getUntil().getSecond());
+					if(debug)System.out.println("");
+				}
 			}
 			
-			if(debug)System.out.println("HIGHER THAN: "+timeBound.getSince().isHigherThan());
-			if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getSince().getHour()+":"+timeBound.getSince().getMinute()+":"+timeBound.getSince().getSecond());
-			if(debug)System.out.println("");
+			
 			
 		   String boundDataUntil[] = line[1].split(Syntax.IF_CONTEXT_THIRD_SEPARATOR); 
 			if(boundDataUntil.length == 2){
-				timeBound.setUntilString(boundDataUntil[1]);
-				timeBound.getUntil().setHigherThan(isHigherThan(boundDataUntil[0]));
+				if(isHigherThan(boundDataSince[0])==true){
+					timeBound.setSinceString(boundDataSince[1]);
+					timeBound.getSince().setHigherThan(isHigherThan(boundDataSince[0]));
+					if(debug)System.out.println("HIGHER THAN: "+timeBound.getSince().isHigherThan());
+					if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getSince().getHour()+":"+timeBound.getSince().getMinute()+":"+timeBound.getSince().getSecond());
+					if(debug)System.out.println("");
+					}
+					else{
+						timeBound.setUntilString(boundDataSince[1]);
+						timeBound.getUntil().setHigherThan(isHigherThan(boundDataSince[0]));
+						if(debug)System.out.println("HIGHER THAN: "+timeBound.getUntil().isHigherThan());
+						if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getUntil().getHour()+":"+timeBound.getUntil().getMinute()+":"+timeBound.getUntil().getSecond());
+						if(debug)System.out.println("");
+					}
 			}
-			
-			if(debug)System.out.println("HIGHER THAN: "+timeBound.getUntil().isHigherThan());
-			if(debug)System.out.println("CALENDAR VALUE: "+timeBound.getUntil().getHour()+":"+timeBound.getUntil().getMinute()+":"+timeBound.getUntil().getSecond());
 			ifContext.addCalendarBound(timeBound);
 		
 		
@@ -288,6 +315,7 @@ public class ContextTranslator {
 		timeofDay.setHour(clockFormat[0]);
 		timeofDay.setMinute(clockFormat[1]);
 		timeofDay.setSecond(clockFormat[2]);
+		timeofDay.setMili(Integer.valueOf(timeofDay.getHour()), Integer.valueOf(timeofDay.getMinute()), Integer.valueOf(timeofDay.getSecond()));
 		if(higher.compareTo("1")==0){
 			timeofDay.setHigherThan(false);
 		}
@@ -296,6 +324,7 @@ public class ContextTranslator {
 		}
 		return timeofDay;
 	}
+	
 	
 	
 }

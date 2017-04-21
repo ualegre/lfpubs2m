@@ -21,13 +21,21 @@ public class Sensor {
 		return status;
 	}
 	public void setStatus(String status) {
-		if(status.equals("off"))
+		if(status.equals("off")||status.equals("OFF"))
 		this.status = Syntax.NEGATIVE_SIGN;
 	}
 	
 	public String getNegatedStatus(){
 		if(this.status.equals(Syntax.NEGATIVE_SIGN)) return "";
 		else return Syntax.NEGATIVE_SIGN;
+	}
+	public boolean isNegative(String status){
+		if(status.equals("off")||status.equals("OFF")){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
 	

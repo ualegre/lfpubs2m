@@ -22,6 +22,7 @@ import edu.casetools.lfpubs2m.reader.LFPUBSPatternReader;
 import edu.casetools.lfpubs2m.reader.Syntax;
 import edu.casetools.lfpubs2m.reader.Syntax.CommandType;
 import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
+import edu.casetools.lfpubs2m.lfpubsdata.Storage;
 
 
 public class LFPUBS2MTranslator {
@@ -33,8 +34,10 @@ public class LFPUBS2MTranslator {
 	private 	  BufferedReader   		 bufferedReader;
 	private 	  LFPUBSPatternReader 			 inputInterpreter;
 	private 	  boolean				 debug;
-	private final static String newline = "\n";
-	private HashMap<String,Integer> states=new HashMap<String,Integer>();
+	private 	  final static String newline = "\n";
+	private  	  HashMap<String,Integer> states=new HashMap<String,Integer>();
+	public	 	  HashMap<TimeBound,String>infor= new HashMap<TimeBound,String>();
+	
 //	private enum  STATES { ID, ON_OCCURS, IF_CONTEXT, THEN_DO };
 	
 	public LFPUBS2MTranslator(boolean debug){
@@ -153,26 +156,45 @@ public class LFPUBS2MTranslator {
 		
 	}
 	
-	public String getTranslation(Vector<LFPUBSPattern> patterns){
+	/*public String getTranslation(Vector<LFPUBSPattern> patterns){
 		if(debug)System.out.println(patterns.size()+" patterns were detected.");
 		return printPatterns(patterns);
 		
-	}
+	}*/
 	
 	private String printPatterns(Vector<LFPUBSPattern> patterns){
 		String actuator="Kettle_0";
-		writeResults(patterns, actuator);
+		
+		//writeResults(patterns, actuator);
 		String result = "";
 		String states="";
 		for(int i=0;i<patterns.size();i++){
+			//Storage.Context=(HashMap<TimeBound, String>) infor.clone();
 			result = result + "___________________________________\n";
 			result = result + "Pattern ID: "+patterns.get(i).getId()+"\n";
 			result = result + ""+patterns.get(i).printPattern()+"\n";
-			states=states+""+patterns.get(i).writeStructure(states);
+			//infor=(HashMap<TimeBound, String>) Storage.Context.clone();
+			//states=states+""+patterns.get(i).writeStructure(states);
 		}
-		result= result+ states;
+		//result= result+ states;
 		return result;
 	}
+	
+	
+	
+	
+	//---------------------------------------------------------------------------------------//
+	
+	
+	//								Hau dana de prueba										//
+	
+	
+	//---------------------------------------------------------------------------------------//
+	
+	
+	
+	/*
+	
 	private void writeResults(Vector<LFPUBSPattern> patterns, String actuator){
 		try{
 			BufferedWriter bw = new BufferedWriter(new FileWriter("lfpubs2m.mtpl"));
@@ -230,12 +252,19 @@ public class LFPUBS2MTranslator {
 		writer.print(" ) -> ");
 		for(int i=0;i<consequences.size();i++){
 			writer.print(consequences.get(i).getStatus()+consequences.get(i).getId());
-			if(states.containsKey(consequences.get(i).getId())==false){
-				states.put(consequences.get(i).getId(), 0);
+			String negconsequence=consequences.get(i).getStatus()+consequences.get(i).getId();
+			if(states.containsKey(negconsequence)==false){
+				if(consequences.get(i).getStatus()=="#"){
+				states.put(consequences.get(i).getId(), -3);
 			}
+				else{
+					states.put(consequences.get(i).getId(), 3);
+				}
+		
 			if(consequences.get(i).getId().contains(actuator)==true){
 				pat=-1;
 			}
+		}
 		}
 		writer.print(" );");
 		if(pat==0){
@@ -297,7 +326,7 @@ public class LFPUBS2MTranslator {
 		writer.println(newline);
 		while(it.hasNext()){
 			String key = (String) it.next();
-			if(states.get(key).intValue()>=0){
+			if(states.get(key).intValue()<0){
 				writer.println(" holdsAt( "+key+" ,0 );");
 				
 			}
@@ -324,8 +353,12 @@ public class LFPUBS2MTranslator {
 		writer.print(" ) -> Pattern_"+id);
 		writer.print(" );");
 		String Pat="Pattern_"+id;
+		String negPat=Syntax.NEGATIVE_SIGN+"Pattern_"+id;
 		if(states.containsKey(Pat)==false){
 			states.put(Pat, 1);
+		}
+		if(states.containsKey(negPat)==false){
+			states.put(negPat, -1);
 		}
 		
 	}
@@ -335,22 +368,23 @@ public class LFPUBS2MTranslator {
 			for(int i=0;i<events.size();i++){
 				writer.println(" ssr( ( "+events.get(i).getStatus()+events.get(i).getId()+" ) -> EPAS_"+id+" );");
 				writer.println(" ssr( ( "+events.get(i).getNegatedStatus()+events.get(i).getId()+" ) -> "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" );");
-				String negindep=events.get(i).getNegatedStatus()+events.get(i).getId();
-				//System.out.println(negindep);
-				if(states.containsKey(events.get(i).getId())==false){
-					states.put(events.get(i).getId(), 0);
+				String indep=events.get(i).getStatus()+events.get(i).getId();
+				if(states.containsKey(indep)==false){
+					if(events.get(i).getStatus()=="#"){
+					states.put(indep, -3);
+					}
+					else{
+					states.put(indep, +3);
+				}
 				}
 				
-				if (states.containsKey(negindep)==false){
-					states.put(negindep, -1);
-				}
 				String val="EPAS_"+id;
 				String val_neg=Syntax.NEGATIVE_SIGN+"EPAS_"+id;
 				if(states.containsKey(val)==false){
-					states.put(val, 0);
+					states.put(val, 3);
 				}
 				else if(states.containsKey(val_neg)==false){
-					states.put(val_neg, -1);
+					states.put(val_neg, -3);
 				}
 			}
 		}
@@ -448,7 +482,7 @@ public class LFPUBS2MTranslator {
 		if(states.containsKey(contextNeg)==false){
 			states.put(contextNeg, -2);
 		}
-	}
+	}*/
 	public void close(){
 		try {
 			

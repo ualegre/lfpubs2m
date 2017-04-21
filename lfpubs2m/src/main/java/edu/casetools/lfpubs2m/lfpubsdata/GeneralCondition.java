@@ -2,7 +2,8 @@ package edu.casetools.lfpubs2m.lfpubsdata;
 
 import java.util.Vector;
 
-public class GeneralCondition {
+
+public class GeneralCondition{
 
 	
 	String[] DayOfWeek;

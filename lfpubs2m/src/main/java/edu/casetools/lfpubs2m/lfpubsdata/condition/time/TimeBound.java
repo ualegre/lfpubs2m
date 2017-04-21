@@ -16,6 +16,11 @@ public class TimeBound {
 		this.since=since;
 		this.until=until;
 	}
+	public void setTimeBound(TimeBound timeBound){
+		this.priority=timeBound.priority;
+		this.since=timeBound.since;
+		this.until=timeBound.until;
+	}
 	
 	
 	public int getPriority() {

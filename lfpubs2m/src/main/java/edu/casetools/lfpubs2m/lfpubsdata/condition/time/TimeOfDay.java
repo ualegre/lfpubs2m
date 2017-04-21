@@ -1,9 +1,11 @@
 package edu.casetools.lfpubs2m.lfpubsdata.condition.time;
-
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 public class TimeOfDay {
 	String hour;
 	String minute;
 	String second;
+	int miliseconds;
 	boolean higherThan;
 	
 	public TimeOfDay(){
@@ -11,6 +13,7 @@ public class TimeOfDay {
 		minute = "";
 		second = "";
 		higherThan = false;
+		miliseconds=0;
 	}
 	
 	public boolean isHigherThan() {
@@ -22,6 +25,7 @@ public class TimeOfDay {
 	}
 
 	public void setTimeOfDay(String timeOfDay){
+		try{
 		float aux   = Float.parseFloat(timeOfDay);
 		int hour   = getHourFromTimeOfDay(aux);
 		int minute = getMinutesFromTimeOfDay(aux,hour);
@@ -30,6 +34,11 @@ public class TimeOfDay {
 		this.hour 	= correct(hour) ;
 		this.minute = correct(minute);
 		this.second = correct(second);
+		this.miliseconds=Integer.valueOf(timeOfDay);
+		}
+		catch (NumberFormatException e) {
+			
+		}
 	}
 	
 	private int getHourFromTimeOfDay(float timeOfDay){
@@ -74,10 +83,24 @@ public class TimeOfDay {
 		this.second = second;
 	}
 	
+	public Integer getMiliseconds() {
+		return miliseconds;
+	}
+
+	public void setMiliseconds(int miliseconds) {
+		this.miliseconds = miliseconds;
+	}
+	public void setMili(int hour, int minute, int seconds){
+		int  time=(hour*3600)+(minute*60)+seconds;
+		this.miliseconds=time;
+	}
+
 	public String getTimeOfDayClockFormat(){
 		return this.hour+":"+this.minute+":"+this.second;
 	}
-	
+	public String getTimeOfDayClockFormat2(TimeOfDay time){
+		return time.hour+":"+time.minute+":"+time.second;
+	}
 	
 	
 }
