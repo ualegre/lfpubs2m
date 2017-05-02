@@ -1,6 +1,4 @@
 lfpubs2m/target/*
-lfpubs2m/target/mreasoner-*-javadoc.jar
-lfpubs2m/target/mreasoner-*-sources.jar
 lfpubs2m/src/main/resources
 lfpubs2m/.settings
 lfpubs2m/.classpath

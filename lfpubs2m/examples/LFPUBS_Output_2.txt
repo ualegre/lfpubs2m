@@ -1,4 +1,3 @@
-
 Action Map 0
 
 (General Conditions)
@@ -51,7 +50,6 @@ IF context()
 THEN do (simple,(ON,LightBedroom (0)), t) when: --
 
 (Action Pattern 9)
-ON occurs (simple,(OFF,Corridor (0) ), t0) 
+ON occurs (simple,(OFF,Corridor (0) ), t0) Frequency: 0
 IF context ()
 THEN do (simple,(ON,Kettle (0)), t) when: t = t0 + 141.0 s. 
-
