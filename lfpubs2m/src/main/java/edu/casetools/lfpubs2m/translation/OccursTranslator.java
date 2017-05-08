@@ -95,7 +95,7 @@ public class OccursTranslator {
 	    		sensor.setStatus( separateData[i] );
 	    		break;
 	    	case 1:
-	    		String id=separateData[i].replace("(", "_");
+	    		String id=separateData[i].substring(0, separateData[i].length() - 1).replace("(", "_");
 	    		String id_f=id.replace(")","");
 	    		sensor.setId(id_f);
 	    		break;

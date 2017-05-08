@@ -11,12 +11,12 @@ public class IfContext {
 	
 	Vector<SensorBound> sensorBound;
 	Vector<TimeBound> 	timeBounds;
-	Vector<DayBound>	dayBound;
+	Vector<String>	dayBound;
 	
 	public IfContext(){
 		sensorBound = new Vector<SensorBound>();
 		timeBounds   = new Vector<TimeBound>();
-		dayBound	= new Vector<DayBound>();
+		dayBound	= new Vector<String>();
 	}
 
 	public Vector<SensorBound> getSensorBound() {
@@ -42,42 +42,15 @@ public class IfContext {
 
 	public void addCalendarBound(TimeBound timeBound) {
 		this.timeBounds.add(timeBound);
-		this.timeBounds=filterCalendarBound(timeBounds);
 		
 	}
 
-	public Vector<DayBound> getDayBound() {
+	public Vector<String> getDayBound() {
 		return dayBound;
 	}
 
-	public void setDayBound(Vector<DayBound> dayBound) {
+	public void setDayBound(Vector<String> dayBound) {
 		this.dayBound = dayBound;
-	}
-	public void addDayBound( DayBound dayBound){
-		this.dayBound.add(dayBound);
-	}
-	
-	public  Vector<TimeBound> filterCalendarBound(Vector<TimeBound> timeBounds){
-		
-		TimeBound timeBound2=new TimeBound();
-		timeBound2.setTimeBound(timeBounds.get(0));
-		for(int i=0;i<timeBounds.size();i++){
-			if(timeBounds.get(i).getSince()!=null){
-				if(timeBounds.get(i).getSince().getMiliseconds()>timeBound2.getSince().getMiliseconds()){
-					timeBound2.setSince(timeBounds.get(i).getSince());
-				}
-			}
-			if(timeBounds.get(i).getUntil()!=null){
-				if(timeBounds.get(i).getUntil().getMiliseconds()<timeBound2.getUntil().getMiliseconds()){
-					timeBound2.setUntil(timeBounds.get(i).getUntil());
-				}
-				
-			}
-		}
-		
-		timeBounds.clear();
-		timeBounds.add(timeBound2);
-		return timeBounds;
 	}
 	
 }

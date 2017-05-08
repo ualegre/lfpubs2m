@@ -5,7 +5,7 @@ public class TimeOfDay {
 	String hour;
 	String minute;
 	String second;
-	int miliseconds;
+	double miliseconds;
 	boolean higherThan;
 	
 	public TimeOfDay(){
@@ -25,7 +25,6 @@ public class TimeOfDay {
 	}
 
 	public void setTimeOfDay(String timeOfDay){
-		try{
 		float aux   = Float.parseFloat(timeOfDay);
 		int hour   = getHourFromTimeOfDay(aux);
 		int minute = getMinutesFromTimeOfDay(aux,hour);
@@ -34,13 +33,27 @@ public class TimeOfDay {
 		this.hour 	= correct(hour) ;
 		this.minute = correct(minute);
 		this.second = correct(second);
-		this.miliseconds=Integer.valueOf(timeOfDay);
-		}
-		catch (NumberFormatException e) {
-			
-		}
+		this.miliseconds=Double.parseDouble(timeOfDay);
+		
 	}
-	
+	public void setTimeOFDaySince(String timeOfDay){
+		String[] time=timeOfDay.split(":");
+		this.hour=time[0];
+		this.minute=time[1];
+		this.second=time[2];
+		this.higherThan=true;
+		this.miliseconds=Integer.valueOf(this.hour)*3600+Integer.valueOf(this.minute)*60+Integer.valueOf(this.second);
+		
+	}
+	public void setTimeOFDayUntil(String timeOfDay){
+		String[] time=timeOfDay.split(":");
+		this.hour=time[0];
+		this.minute=time[1];
+		this.second=time[2];
+		this.higherThan=false;
+		this.miliseconds=Integer.valueOf(this.hour)*3600+Integer.valueOf(this.minute)*60+Integer.valueOf(this.second);
+		
+	}
 	private int getHourFromTimeOfDay(float timeOfDay){
 		int hour = (int)timeOfDay/3600;
 		return hour;
@@ -83,7 +96,7 @@ public class TimeOfDay {
 		this.second = second;
 	}
 	
-	public Integer getMiliseconds() {
+	public Double getMiliseconds() {
 		return miliseconds;
 	}
 

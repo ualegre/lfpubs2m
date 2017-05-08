@@ -29,8 +29,8 @@ public class Sensor {
 		if(this.status.equals(Syntax.NEGATIVE_SIGN)) return "";
 		else return Syntax.NEGATIVE_SIGN;
 	}
-	public boolean isNegative(String status){
-		if(status.equals("off")||status.equals("OFF")){
+	public boolean isNegative(){
+		if(this.status.equals(Syntax.NEGATIVE_SIGN)==true){
 			return true;
 		}
 		else{

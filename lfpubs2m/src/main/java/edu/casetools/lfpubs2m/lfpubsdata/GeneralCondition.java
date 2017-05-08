@@ -1,49 +1,51 @@
 package edu.casetools.lfpubs2m.lfpubsdata;
 
+import java.util.Arrays;
 import java.util.Vector;
+
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
 
 
 public class GeneralCondition{
 
 	
-	String[] DayOfWeek;
-	String TimeOfDaySmall;
-	String TimeOfDayBig;
+	Vector<String> DayOfWeek;
+	TimeBound timebound;
 	
 
 	public GeneralCondition(){
-		DayOfWeek=null;
-		TimeOfDaySmall=null;
-		TimeOfDayBig=null;
+		DayOfWeek=new Vector<String>();
+		timebound=new TimeBound();
 	}
 public void setDayOfWeek(String dayOfWeek){
-	this.DayOfWeek=dayOfWeek.split(",");
-	//System.out.println(DayOfWeek[0]);    ///Esti hau gero aldau
+	String[] days=dayOfWeek.toLowerCase().split(",");
+	this.DayOfWeek=new Vector<String>(Arrays.asList(days));
+	
 	
 }
-public void setTimeDaySmall(String smallTime){
-	if(this.TimeOfDaySmall==null){
-		this.TimeOfDaySmall=smallTime;
-	}	
-}
-public void setTimeDayBig(String bigTime){
-	if(this.TimeOfDayBig==null){
-		this.TimeOfDayBig=bigTime;
-	}
-	}
+
 public void setGeneralCondition(GeneralCondition generalCondition){
 	this.DayOfWeek=generalCondition.DayOfWeek;
-	this.TimeOfDayBig=generalCondition.TimeOfDayBig;
-	this.TimeOfDaySmall=generalCondition.TimeOfDaySmall;
+	this.timebound=generalCondition.timebound;
 }
-public String[] getDayOfWeek() {
+
+public Vector<String> getDayOfWeek() {
 	return DayOfWeek;
 }
-public String getTimeOfDaySmall() {
-	return TimeOfDaySmall;
+public TimeBound getTimebound() {
+	return timebound;
 }
-public String getTimeOfDayBig() {
-	return TimeOfDayBig;
+public void setTimebound(TimeBound timebound) {
+	this.timebound.setSince(timebound.getSince());
+	this.timebound.setUntil(timebound.getUntil());
 }
+public void setSince(TimeOfDay since){
+	this.timebound.setSince(since);
+}
+public void setUntil(TimeOfDay until){
+	this.timebound.setUntil(until);
+}
+
 
 }

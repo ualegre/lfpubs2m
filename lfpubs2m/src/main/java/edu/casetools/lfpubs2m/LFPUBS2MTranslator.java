@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -16,13 +18,12 @@ import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
-//import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
 import edu.casetools.lfpubs2m.reader.LFPUBSPatternReader;
 import edu.casetools.lfpubs2m.reader.Syntax;
 import edu.casetools.lfpubs2m.reader.Syntax.CommandType;
 import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
-import edu.casetools.lfpubs2m.lfpubsdata.Storage;
 
 
 public class LFPUBS2MTranslator {
@@ -35,8 +36,9 @@ public class LFPUBS2MTranslator {
 	private 	  LFPUBSPatternReader 			 inputInterpreter;
 	private 	  boolean				 debug;
 	private 	  final static String newline = "\n";
+	private 	  GeneralCondition generalCondition=new GeneralCondition();
 	private  	  HashMap<String,Integer> states=new HashMap<String,Integer>();
-	public	 	  HashMap<TimeBound,String>infor= new HashMap<TimeBound,String>();
+	private  	  HashMap<String, Object> context=new HashMap<String, Object>();
 	
 //	private enum  STATES { ID, ON_OCCURS, IF_CONTEXT, THEN_DO };
 	
@@ -107,7 +109,7 @@ public class LFPUBS2MTranslator {
 		Vector<LFPUBSPattern> patterns = new Vector<LFPUBSPattern>();
 	    LFPUBSPattern auxiliarPattern = new LFPUBSPattern();
 		CommandType commandType = CommandType.EMPTY;
-		GeneralCondition generalCondition=new GeneralCondition();
+		
 	
 		String line;
 		try {
@@ -132,7 +134,8 @@ public class LFPUBS2MTranslator {
 				if( line.contains( Syntax.THEN_DO_START ) ){
 					commandType = CommandType.THEN_DO;
 				}
-				auxiliarPattern   = inputInterpreter.interpretCommand(auxiliarPattern, line, commandType, generalCondition);
+				generalCondition=inputInterpreter.interpretCommandGeneralCondition(line, commandType, generalCondition);
+				auxiliarPattern   = inputInterpreter.interpretCommand(auxiliarPattern, line, commandType);
 				if( commandType.equals(CommandType.THEN_DO) ){
 					patterns.add(auxiliarPattern);
 					auxiliarPattern = new LFPUBSPattern();
@@ -152,337 +155,439 @@ public class LFPUBS2MTranslator {
 		setFileName(filename);
 		Vector<LFPUBSPattern> patterns = readPatterns();
 		if(debug)System.out.println(patterns.size()+" patterns were detected.");
+		patterns=defineStates(patterns);
+		patterns=CreatingOutputRules(patterns, generalCondition);
+		patterns=concatenatePatterns(patterns);
 		return printPatterns(patterns);
 		
 	}
 	
-	/*public String getTranslation(Vector<LFPUBSPattern> patterns){
-		if(debug)System.out.println(patterns.size()+" patterns were detected.");
-		return printPatterns(patterns);
+	private Vector<LFPUBSPattern> CreatingOutputRules(Vector<LFPUBSPattern> patterns,GeneralCondition generalCondition) {
+		String time_context,day_bound, sensor_bound;
 		
-	}*/
-	
-	private String printPatterns(Vector<LFPUBSPattern> patterns){
-		String actuator="Kettle_0";
+		TimeBound narrowestTimeBound=DefineGeneralTimeContext(generalCondition.getTimebound());
+		context.put( "actionMap_time_context", generalCondition.getTimebound());
+		states.put("actionMap_time_context", 2);
 		
-		//writeResults(patterns, actuator);
-		String result = "";
-		String states="";
-		for(int i=0;i<patterns.size();i++){
-			//Storage.Context=(HashMap<TimeBound, String>) infor.clone();
-			result = result + "___________________________________\n";
-			result = result + "Pattern ID: "+patterns.get(i).getId()+"\n";
-			result = result + ""+patterns.get(i).printPattern()+"\n";
-			//infor=(HashMap<TimeBound, String>) Storage.Context.clone();
-			//states=states+""+patterns.get(i).writeStructure(states);
-		}
-		//result= result+ states;
-		return result;
-	}
-	
-	
-	
-	
-	//---------------------------------------------------------------------------------------//
-	
-	
-	//								Hau dana de prueba										//
-	
-	
-	//---------------------------------------------------------------------------------------//
-	
-	
-	
-	/*
-	
-	private void writeResults(Vector<LFPUBSPattern> patterns, String actuator){
-		try{
-			BufferedWriter bw = new BufferedWriter(new FileWriter("lfpubs2m.mtpl"));
-			PrintWriter writer = new PrintWriter(bw);	
-			for(int i=0;i<patterns.size();i++){
-				writedoc(patterns.get(i),writer, actuator);
+		Vector<DayBound> narrowestDayBoundVector=DefineGeneralDayContext(generalCondition.getDayOfWeek());
+		if(narrowestDayBoundVector.size()>1){
+			for(int i=0;i<narrowestDayBoundVector.size();i++){
+				context.put("actionMap_day_context_"+i, narrowestDayBoundVector.get(i));
+				states.put("actionMap_day_context_"+i, 2);
 			}
-			writeStates(writer);
-			writeIndependentStates(writer);
-			InitialStatus(writer);
-			writer.close();
-		}
-		catch(Exception error){	
-			System.out.println("Error Message: " + error.getMessage());
-		}
-	}
-	//---------------------------------------------------------------------------------------------//
-	//All the states have been saved in a HashMap and taking into account the nature of each states
-	//different values have been settled.
-	//			Dependent states	=	(id, 1)
-	//			Context_positive	=	(id, 2)
-	//			Context_negative	=	(id, -2)
-	//			Independent_posi	=	(id, 0)
-	//			Independent_posi	=	(id, -1)
-	//---------------------------------------------------------------------------------------------//
-
-	public void writedoc(LFPUBSPattern pattern, PrintWriter writer, String actuator){
-		if((pattern.getEvents().size()>0)&&(pattern.getConsequence().size()>0)){
-			writeEvents(pattern.getEvents(), pattern.getId(),writer);
-			writeContext(pattern.getCalendar_context(),pattern.getId(), writer);
-			writer.println();
-			writeContextNegative(pattern.getCalendar_context(),pattern.getId(), writer);
-			writer.println();
-			writeDayContextRules(pattern.getDay_context(), pattern.getId(),writer);
-			writeDayContextRulesNegatives(pattern.getDay_context(),pattern.getId(),writer);
-			writeAction(pattern.getDelay(),pattern.getId(), pattern.getCalendar_context(),pattern.getEvents(),pattern.getSensor_context(),pattern.getDay_context(),pattern.getConsequences(), writer, actuator);
-			writer.println();
-		}
-	}
-	private void writeAction(String delay, String id, Vector<TimeBound> calendar_context,Vector<Sensor> events,Vector<SensorBound>sensor_context, Vector<DayBound>day_context, Vector<Sensor> consequences,PrintWriter writer, String actuator) {
-		int pat=0;
-		writer.print(" ssr( (");
-		if(events.size()>0){
-			writer.print(" [-]["+delay+"]EPAS_"+id+" ^ ");
-		}
-		if(calendar_context.size()>0){
-			writer.print("calendar_context_"+id+" ^ ");
-		}
-		if(sensor_context.size()>0){
-			writer.print("[-]["+delay+"]sensor_context_"+id+" ^ ");
-		}
-		if(day_context.size()>0){
-			writer.print("day_context_"+id);
-		}
-		writer.print(" ) -> ");
-		for(int i=0;i<consequences.size();i++){
-			writer.print(consequences.get(i).getStatus()+consequences.get(i).getId());
-			String negconsequence=consequences.get(i).getStatus()+consequences.get(i).getId();
-			if(states.containsKey(negconsequence)==false){
-				if(consequences.get(i).getStatus()=="#"){
-				states.put(consequences.get(i).getId(), -3);
-			}
-				else{
-					states.put(consequences.get(i).getId(), 3);
-				}
-		
-			if(consequences.get(i).getId().contains(actuator)==true){
-				pat=-1;
-			}
-		}
-		}
-		writer.print(" );");
-		if(pat==0){
-			writer.println();
-			writefinalPattern(delay, calendar_context, id, consequences, sensor_context, day_context, consequences, writer);
 		}
 		else{
-			writeFinalPattern(writer, actuator);
+			context.put("actionMap_day_context", narrowestDayBoundVector.get(0));
+			states.put("actionMap_day_context", 2);
 		}
 		
-		
-	}
-	public void writeFinalPattern(PrintWriter writer, String actuator){
-		writer.println();
-		writer.print(" ssr( (");
-		Iterator it=states.keySet().iterator();
-		while(it.hasNext()){
-			String key=(String) it.next();
-			if(key.contains("Pattern_")==true){
-				writer.print(key+" ^ ");
+		for(int i=0;i<patterns.size();i++){
+			time_context="time_context_"+i;
+			day_bound="day_context_+"+i;
+			sensor_bound="sensor_context_"+i;
+			if(patterns.get(i).getCalendar_context().size()!=0){
+				String Output=DefineCalendarContext(patterns.get(i).getCalendar_context(), generalCondition.getTimebound(), time_context, narrowestTimeBound);
+				patterns.get(i).addOutput(Output);
 			}
-		}
-		writer.print(" ) -> "+actuator+" );");
-	
-	}
-	
-
-	public void writeStates( PrintWriter writer){
-		String auxiliar_comma[] = {",",","};
-		int j=0;
-		Iterator it=states.keySet().iterator();
-		writer.print(" states( ");
-		while(it.hasNext()){
-			String key = (String) it.next();
-			if(states.get(key).intValue()>=0){
-			writer.print(" "+key+auxiliar_comma[j]);
-			if(j==0)j++;
-			
-			}
-		}
-		//writer.print(states.get("Kettle(0),"));
-		//writer.print(states.get(Syntax.NEGATIVE_SIGN+"Kettle(0)"));
-		writer.print(" );");
-	}
-	public void writeIndependentStates(PrintWriter writer){
-		Iterator it=states.keySet().iterator();
-		writer.println(newline);
-		while(it.hasNext()){
-			String key = (String) it.next();
-			if(states.get(key).intValue()!=1){
-				writer.print(" is( "+key+" );");
-				writer.println();
-				
+			else{
+					time_context="actionMap_time_context";
+					patterns.get(i).addOutput(time_context);
 				}
-			}
-		}
-	public void InitialStatus(PrintWriter writer){
-		Iterator it=states.keySet().iterator();
-		writer.println(newline);
-		while(it.hasNext()){
-			String key = (String) it.next();
-			if(states.get(key).intValue()<0){
-				writer.println(" holdsAt( "+key+" ,0 );");
-				
-			}
-		}
-	}
-	
-			
-
-	private void writefinalPattern(String delay, Vector<TimeBound> calendar_context, String id,Vector<Sensor> events,Vector<SensorBound>sensor_context, Vector<DayBound>day_context, Vector<Sensor> consequences,PrintWriter writer) {
-		writer.print("");
-		writer.print(" ssr( (");
-		if(events.size()>0){
-			writer.print(" [-]["+delay+"]EPAS_"+id+" ^ ");
-		}
-		if(calendar_context.size()>0){
-			writer.print(" calendar_context_"+id+" ^ ");
-		}
-		if(sensor_context.size()>0){
-			writer.print(" [-]["+delay+"]sensor_context_"+id+" ^ ");
-		}
-		if(day_context.size()>0){
-			writer.print("day_context_"+id);
-		}
-		writer.print(" ) -> Pattern_"+id);
-		writer.print(" );");
-		String Pat="Pattern_"+id;
-		String negPat=Syntax.NEGATIVE_SIGN+"Pattern_"+id;
-		if(states.containsKey(Pat)==false){
-			states.put(Pat, 1);
-		}
-		if(states.containsKey(negPat)==false){
-			states.put(negPat, -1);
-		}
-		
-	}
-
-	public void writeEvents(Vector<Sensor>events, String id,PrintWriter writer){
-		if(events.size()>0){
-			for(int i=0;i<events.size();i++){
-				writer.println(" ssr( ( "+events.get(i).getStatus()+events.get(i).getId()+" ) -> EPAS_"+id+" );");
-				writer.println(" ssr( ( "+events.get(i).getNegatedStatus()+events.get(i).getId()+" ) -> "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" );");
-				String indep=events.get(i).getStatus()+events.get(i).getId();
-				if(states.containsKey(indep)==false){
-					if(events.get(i).getStatus()=="#"){
-					states.put(indep, -3);
+			//Approach if specific Conditions introduce Day Boundaries	
+			if(patterns.get(i).getDay_context().size()!=0){
+				Vector<DayBound>specificDays=DefineDayContext(patterns.get(i).getDay_context(), generalCondition.getDayOfWeek(), day_bound, narrowestDayBoundVector);
+				if(specificDays.size()>1){
+					for(int z=0;z<specificDays.size();z++){
+						context.put("day_context_"+z, specificDays.get(z));
+						states.put("day_context_"+z, 2);
+						patterns.get(i).addOutput("day_context_"+z);
 					}
-					else{
-					states.put(indep, +3);
-				}
-				}
-				
-				String val="EPAS_"+id;
-				String val_neg=Syntax.NEGATIVE_SIGN+"EPAS_"+id;
-				if(states.containsKey(val)==false){
-					states.put(val, 3);
-				}
-				else if(states.containsKey(val_neg)==false){
-					states.put(val_neg, -3);
-				}
-			}
-		}
-	}
-	public void writeContext(Vector<TimeBound>calendar_context,String id, PrintWriter writer){
-		if(calendar_context.size()>0){
-			for(int i=0;i<calendar_context.size();i++){
-				if(calendar_context.get(i).getUntil()!=null){
-					TimeBound timeBound=calendar_context.get(i);
-					if(timeBound.getSince().isHigherThan()){
-						writer.print(" ssr( ( clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getUntil().getTimeOfDayClockFormat()+")");
-						
-					}
-					else{
-						writer.print(" ssr( ( clockBetween("+timeBound.getUntil().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
-					}
-					
 				}
 				else{
-					TimeBound timeBound=calendar_context.get(i);
-					if(timeBound.getSince().isHigherThan()){
-						writer.print(" ssr( ( clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+"23:59:59)");
-						
-					}
-					else{
-						writer.print(" ssr( ( clockBetween(00:00:00"+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
-					}
-			}
-			}
-			writer.print(" ) -> calendar_context_"+id+" );");
-			String context="calendar_context_"+id;
-			//System.out.println(context);
-			if(states.containsKey(context)==false){
-				states.put(context, +2);
-			}
-		}
-		}
-	public void writeContextNegative(Vector<TimeBound>calendar_context, String id, PrintWriter writer){
-		if(calendar_context.size()>0){
-		for(int i=0;i<calendar_context.size();i++){
-			if(calendar_context.get(i).getUntil()!=null){
-				TimeBound timeBound=calendar_context.get(i);
-				if(timeBound.getSince().isHigherThan()){
-					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getUntil().getTimeOfDayClockFormat()+")");
-					
-				}
-				else{
-					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getUntil().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
+					context.put("day_context_"+i, specificDays.get(0));
+					states.put("day_context_"+i, 2);
+					patterns.get(i).addOutput("day_context_"+i);
 				}
 			}
 			else{
-				TimeBound timeBound=calendar_context.get(i);
-				if(timeBound.getSince().isHigherThan()){
-					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+timeBound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+"23:59:59)");
+				Iterator it= context.keySet().iterator();
+				while(it.hasNext()){
+					String key= (String) it.next();
+					if(key.contains("actionMap_day_context")==true){
+					day_bound=key;
+					patterns.get(i).addOutput(day_bound);
+				}
+				}
+			}
+			if(patterns.get(i).getSensor_context().size()!=0){
+				for(int k=0;k<patterns.get(i).getSensor_context().size();k++){
+				context.put(sensor_bound, patterns.get(i).getSensor_context().get(i));
+				patterns.get(i).addOutput(sensor_bound);
+				states.put(sensor_bound, 2);
+				}
+			}
+		}
+		return patterns;
+	}
+
+	private Vector<DayBound> DefineGeneralDayContext(Vector<String> dayOfWeek) {
+		Vector<DayBound>generalDayBound=new Vector<DayBound>();
+		DayBound generalCondition=new DayBound();
+		String[] weekDays={"monday", "tuesday", "wednesday", "thursday", "friday"};
+		String [] weekends={"saturday", "sunday"};
+		String [] separatedDays={"monday", "wednesday","friday"};
+		String[] week={"monday", "tuesday", "wednesday", "thursday", "friday","saturday", "sunday"};
+		//String auxiliar_comma[] = {""," ^ "};
+		int j=0;
+	
+			if(dayOfWeek.size()==7){
+				generalCondition.setSince("monday");
+				generalCondition.setUntil("sunday");
+				generalDayBound.addElement(generalCondition);
+			}
+			else if(dayOfWeek.containsAll(Arrays.asList(weekends))==true){
+				generalCondition.setSince("saturday");
+				generalCondition.setUntil("sunday");
+				generalDayBound.addElement(generalCondition);
+			}
+			else if(dayOfWeek.containsAll(Arrays.asList(weekDays))==true){
+				generalCondition.setSince("monday");
+				generalCondition.setUntil("friday");
+				generalDayBound.addElement(generalCondition);
+			}
+			else if(isSeparated(dayOfWeek)==true){
+				for(int i=0;i<dayOfWeek.size();i++){
+					DayBound generalConditions=new DayBound();
+					generalConditions.setSince(dayOfWeek.get(i));
+					generalDayBound.add(generalConditions);
 					
 				}
-				else{
-					writer.print(" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween(00:00:00"+Syntax.CLOCK_SEPARATOR+timeBound.getSince().getTimeOfDayClockFormat()+")");
-				}	
-		}
-		}
-		writer.print(" ) -> "+Syntax.NEGATIVE_SIGN+"calendar_context_"+id+" );");
-		String context=Syntax.NEGATIVE_SIGN+"calendar_context_"+id;
-		if(states.containsKey(context)==false){
-			states.put(context, -2);
-		}
-		}
-	}
-	public void writeDayContextRules(Vector<DayBound>day_context, String id, PrintWriter writer){
-		writer.print(" ssr( ( ");
-		for(int i=0;i<day_context.size();i++){
-			DayBound bound=day_context.get(i);
-				writer.print("weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")");
-				if(i == (day_context.size()-1) ){
-					writer.println( " ) -> day_context_"+id+" );" );
-					
 			}
+			else if(isSeparated(dayOfWeek)==false){
+				generalCondition.setSince(dayOfWeek.get(0));
+				generalCondition.setUntil(dayOfWeek.get(dayOfWeek.size()-1));
+				generalDayBound.add(generalCondition);
+			}
+		return generalDayBound;
 	}
-		String contextNeg="day_context_"+id;
-		if(states.containsKey(contextNeg)==false){
-			states.put(contextNeg, 2);
+
+	private boolean isSeparated(Vector<String> dayOfWeek) {
+		String[] week={"monday", "tuesday", "wednesday", "thursday", "friday","saturday", "sunday"};
+		int find=findDay(dayOfWeek);
+		for(int i=find;i<dayOfWeek.size();i++){
+			int a=i+1;
+			if(a!=dayOfWeek.size()==true){
+				if(dayOfWeek.contains(week[a])==false){
+				return true;
+					}
+				}
+			
+			}
+		return false;
 		}
-	}
-	public void writeDayContextRulesNegatives(Vector<DayBound>day_context, String id, PrintWriter writer){
-		writer.print(" ssr( ( ");
-		for(int i=0;i<day_context.size();i++){
-			DayBound bound=day_context.get(i);
-				writer.print(Syntax.NEGATIVE_SIGN+"weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")");
-				if(i == (day_context.size()-1) ){
-					writer.println( " ) -> "+Syntax.NEGATIVE_SIGN+"day_context_"+id+" );" );
+
+	private int findDay(Vector<String> dayOfWeek) {
+		String[] week={"monday", "tuesday", "wednesday", "thursday", "friday","saturday", "sunday"};
+		for(int i=0;i<week.length;i++){
+			for(int j=0;j<dayOfWeek.size();j++){
+				if(week[i].compareTo(dayOfWeek.get(j))==0){
+					return i;
 				}
 				
 			}
-		String contextNeg=Syntax.NEGATIVE_SIGN+"day_context_"+id;
-		if(states.containsKey(contextNeg)==false){
-			states.put(contextNeg, -2);
 		}
-	}*/
+		return -1;
+	}
+
+	private TimeBound DefineGeneralTimeContext(TimeBound timebound) {
+		TimeBound narrowestTimeBound= new TimeBound();
+		narrowestTimeBound.setUntil(generalCondition.getTimebound().getUntil());
+		narrowestTimeBound.setSince(generalCondition.getTimebound().getSince());
+		return narrowestTimeBound;
+	}
+
+	private Vector<DayBound> DefineDayContext(Vector<String> day_context, Vector<String> dayOfWeek, String day_bound, Vector<DayBound> narrowestDayBoundVector) {
+		DayBound generalCondition= new DayBound();
+		Vector<DayBound>generalDayBound= new Vector<DayBound>();
+		for(int k=0;k<day_context.size();k++){
+			 if(dayOfWeek.contains(day_context.get(k))==false){
+				 dayOfWeek.add(day_context.get(k));
+				}
+			 }
+		dayOfWeek=sortDays(dayOfWeek);
+		if(isSeparated(dayOfWeek)==false){
+			generalCondition.setSince(dayOfWeek.get(0));
+			generalCondition.setUntil(dayOfWeek.get(dayOfWeek.size()-1));
+			generalDayBound.add(generalCondition);
+		}
+		else{
+			for(int i=0;i<dayOfWeek.size();i++){
+				generalCondition.setSince(dayOfWeek.get(i));
+				generalDayBound.add(generalCondition);
+			}
+		}
+		
+		return generalDayBound;
+	}
+
+	private Vector<String> sortDays(Vector<String> dayOfWeek) {
+		String[] week={"monday", "tuesday", "wednesday", "thursday", "friday","saturday", "sunday"};
+		Vector<String> sortedDays= new Vector<String>();
+		int find=findDay(dayOfWeek);
+		for(int i=find;i<week.length;i++){
+			if(dayOfWeek.contains(week[i])==true){
+			sortedDays.add(week[i]);
+			i=find;
+		}
+		}
+		return sortedDays;
+	}
+
+	private String DefineCalendarContext(Vector<TimeBound> calendar_context, TimeBound timebound, String time_context, TimeBound narrowestTimeBound) {
+		String output="";
+		for(int j=0;j<calendar_context.size();j++){
+			if(calendar_context.get(j).getUntil()!=null){
+				if(calendar_context.get(j).getUntil().getMiliseconds()<generalCondition.getTimebound().getUntil().getMiliseconds()){
+					narrowestTimeBound.setUntil(calendar_context.get(j).getUntil());
+					narrowestTimeBound.setPriority(0);
+					}
+				}
+			if(calendar_context.get(j).getSince()!=null){
+				if(calendar_context.get(j).getSince().getMiliseconds()>generalCondition.getTimebound().getSince().getMiliseconds()){
+					narrowestTimeBound.setSince(calendar_context.get(j).getSince());
+					narrowestTimeBound.setPriority(0);
+					}
+				}
+		
+		}
+		context.put(time_context,narrowestTimeBound);
+		states.put(time_context, 2);
+
+	
+		return time_context;
+	}
+
+	private Vector<LFPUBSPattern> defineStates(Vector<LFPUBSPattern> patterns) {
+		for(int i=0; i<patterns.size();i++){	
+			String rule="Pattern_"+i;
+			if(patterns.get(i).getActuator()==false){
+			for(int j=0;j<patterns.get(i).getEvents().size();j++){
+				if((patterns.get(i).getEvents().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
+					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+					states.put(event,-3);
+				}
+				else if((patterns.get(i).getEvents().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
+					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+					states.put(event,3);
+					
+				}
+			}
+			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
+				if((patterns.get(i).getConsequences().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId())==false)){
+					String event=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+					states.put(event,-3);
+				}
+				else if((patterns.get(i).getConsequences().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId())==false)){
+					String event=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+					states.put(event,3);
+			}
+			patterns.get(i).addOutput(rule);
+			states.put(rule, 1);
+			}
+		}
+			else{for(int j=0;j<patterns.get(i).getEvents().size();j++){
+				if((patterns.get(i).getEvents().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
+					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+					states.put(event,-1);
+				}
+				else if((patterns.get(i).getEvents().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
+					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+					states.put(event,1);
+					
+				}
+			}
+			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
+				if((patterns.get(i).getConsequences().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId())==false)){
+					String event=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+					states.put(event,-1);
+				}
+				else if((patterns.get(i).getConsequences().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId())==false)){
+					String event=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+					states.put(event,1);
+			}
+			patterns.get(i).addOutput(rule);
+			states.put(rule, 1);
+			}
+		}
+				
+			}
+
+		return patterns;
+	}
+
+	private Vector<LFPUBSPattern> concatenatePatterns(Vector<LFPUBSPattern> patterns) {
+		for(int i=0;i<patterns.size();i++){
+			String rule="Pattern_"+i;
+			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
+				String consequence=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+				int find=findPattern(patterns, consequence);
+				if(find!=-1){
+					patterns.get(find).addOutput(rule);
+				}
+				else{
+					//patterns.get(i).addOutput(rule);
+				}
+			}
+		}
+		
+		return patterns;
+	}
+
+	private int findPattern(Vector<LFPUBSPattern> patterns, String consequence) {
+		for(int i=0;i<patterns.size();i++){
+			for(int j=0;j<patterns.get(i).getEvents().size();j++){
+				String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+				if(consequence.compareTo(event)==0){
+					return i;
+				}
+			}
+			
+		}
+		return -1;
+	}
+
+	private String printPatterns(Vector<LFPUBSPattern> patterns){
+		String result = "";
+		result=printStates();
+		result=result+printIndepentStates();
+		result=result+printInitialStatus();
+		result=result+printContext();
+		
+		for(int i=0;i<patterns.size();i++){
+			result = result + " \n";
+			//result = result + "Pattern ID: "+patterns.get(i).getId()+"\n";
+			result = result + ""+patterns.get(i).printPattern()+"\n";
+		}
+		
+		return result;
+	}
+	
+	public String printIndepentStates(){
+		Iterator it=states.keySet().iterator();
+		String pattern="";
+		while(it.hasNext()){
+			String key = (String) it.next();
+			if(((states.get(key).intValue()==2)||(states.get(key).intValue()==3))&&((key.contains("context")==false))){
+				pattern=pattern+" is( "+key.substring(0, key.length()-2)+" ); \n";
+				
+				}
+			else if (key.contains("context")==true){
+				pattern=pattern+" is( "+key+" ); \n";
+				
+			}
+			}
+		pattern=pattern+"\n";
+		return pattern;
+		}
+	
+	private String printInitialStatus(){
+		String pattern="";
+	Iterator it=states.keySet().iterator();
+	while(it.hasNext()){
+		String key=(String) it.next();
+		if((key.contains("Pat")==false)&&(key.contains("context")==false)){
+			if(states.get(key).intValue()<0){
+				key=key.substring(0,key.length()-2);
+				pattern=pattern+" holdsAt( "+key+" ,0 ); \n";
+			}
+			else{
+				key=key.substring(0,key.length()-2);
+					pattern=pattern+" holdsAt( "+Syntax.NEGATIVE_SIGN+key+" ,0 ); \n";
+				}
+				
+			}
+	else{
+		pattern=pattern+" holdsAt( "+Syntax.NEGATIVE_SIGN+key+" ,0 ); \n";
+	}
+	}
+	pattern=pattern+"\n";
+	return pattern;
+	}
+	private String printStates(){
+		String auxiliar_comma[] = {""," , "};
+		int j=0;
+		String pattern=" states( ";
+		Iterator it=states.keySet().iterator();
+		while(it.hasNext()){
+			String key=(String) it.next();
+			if(states.get(key).intValue()>0){
+				if((key.contains("Pat")==false)&&(key.contains("context")==false)){
+				pattern=pattern+auxiliar_comma[j]+key.substring(0,key.length()-2);
+				if(j==0)j++;
+			}
+				else{
+					pattern=pattern+auxiliar_comma[j]+key;
+					if(j==0)j++;
+				}
+			}
+		}
+		pattern=pattern+" ); \n";
+		return pattern;
+	}
+	
+	String printContext(){
+		String auxiliar_comma[] = {""," ^ "};
+		int j=0;
+		String pattern="";
+		Iterator it=context.keySet().iterator();
+		while(it.hasNext()){
+			String key=(String) it.next();
+			if(key.contains("time_context")==true){
+				Object bound=context.get(key);
+				pattern=pattern+printCalendarContext(key, bound);
+			}
+			else if (key.contains("day_context")==true){
+				Object bound=context.get(key);
+				pattern=pattern+printDayContext(key, bound);
+			
+			}
+			else if( key.contains("sensor_context")==true){
+				Object sensor=context.get(key);
+				pattern=pattern+printSensorContext(key,sensor);
+			}
+		}
+		return pattern;
+		
+	}
+	public String printCalendarContext(String rule, Object Timebound){
+		TimeBound bound=(TimeBound) Timebound;
+		String pattern=" ssr( ( clockBetween("+bound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+" ) -> "+rule+" ); \n";
+		pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+bound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+" ) -> "+Syntax.NEGATIVE_SIGN+rule+" ); \n";
+		return pattern;
+	}
+	public String printDayContext(String rule, Object Daybound){
+		String pattern="";
+		//String auxiliar_comma[] = {""," ^ "};
+		int j=0;
+		DayBound bound=(DayBound) Daybound;
+			if(bound.getUntil()==null){
+				pattern=pattern+" ssr( ( weekDayAt("+bound.getSince()+" ) ) -> "+rule+" ) \n";
+				pattern=pattern+" ssr( ("+Syntax.NEGATIVE_SIGN+"weekDayAt("+bound.getSince()+" ) ) -> "+Syntax.NEGATIVE_SIGN+rule+" ) \n";
+				}
+			else{
+				pattern=pattern+" ssr( ( weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+rule+" ) \n";
+				pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+Syntax.NEGATIVE_SIGN+rule+" ) \n";
+			}
+			
+		return pattern;
+	}
+	public String printSensorContext(String rule, Object Sensorbound){
+		SensorBound bound=(SensorBound) Sensorbound;
+		String pattern=" ssr( ( sensorBetween("+ bound.getSince().getStatus()+bound.getSince().getId()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getStatus()+bound.getUntil().getId()+" ) ->"+rule+") \n";
+		pattern=pattern+ " ssr( ( sensorBetween("+ bound.getSince().getNegatedStatus()+bound.getSince().getId()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getNegatedStatus()+bound.getUntil().getId()+" ) ->"+rule+") \n";
+		return pattern;
+	}
+
 	public void close(){
 		try {
 			
@@ -494,7 +599,7 @@ public class LFPUBS2MTranslator {
 		}
 	}
 
-
+	
 
 
 }

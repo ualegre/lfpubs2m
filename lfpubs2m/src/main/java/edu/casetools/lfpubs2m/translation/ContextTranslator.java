@@ -1,5 +1,9 @@
 package edu.casetools.lfpubs2m.translation;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +27,9 @@ public class ContextTranslator {
 	private Pattern p;
 	private Matcher m;
 	private boolean debug;
+	private String [] wholeWeek={"monday","tuesday","wednesday","thursday","friday","saturday","sunday"};
+	private String [] weekdays={"monday","tuesday","wednesday","thursday","friday"};
+	//private 
 	
 	public ContextTranslator(boolean debug){
 		this.debug = debug;
@@ -290,7 +297,7 @@ public class ContextTranslator {
 		return false;
 	}
 
-	public IfContext setContext(IfContext ifContext, GeneralCondition generalCondition) {
+	/*public IfContext setContext(IfContext ifContext, GeneralCondition generalCondition) {
 		String smallTime=generalCondition.getTimeOfDaySmall();
 		String bigTime=generalCondition.getTimeOfDayBig();
 		int priority=2;
@@ -303,12 +310,39 @@ public class ContextTranslator {
 		ifContext.addCalendarBound(timeBound);
 		
 		String [] dayOfWeek=generalCondition.getDayOfWeek();
-		String since=dayOfWeek[0];
-		String until=dayOfWeek[dayOfWeek.length-1];
-		DayBound week=new DayBound(since, until);
-		ifContext.addDayBound(week);
+		ifContext=checkDayOfWeek(dayOfWeek, ifContext);
+		
 		return ifContext;
 	}
+	private  IfContext  checkDayOfWeek(String[] dayOfWeek, IfContext ifContext ) {
+		DayBound week=new DayBound();
+			String[] lists = {"sunday","monday","tuesday","wednesday","thursday","friday","saturday"};
+			String [] weekdays={"monday","tuesday","wednesday","thursday","friday"};
+			int a=0;
+			Vector<String>myList=new Vector<String>();
+			for(int i=0;i<lists.length;i++){
+				if(Arrays.asList(dayOfWeek).contains(lists[i])==true){
+					Arrays.asList(dayOfWeek).set(a, lists[i]);
+					a=a+1;
+				}
+			}
+				if(dayOfWeek.length==7){
+						week.setSince("monday"); 
+						week.setUntil("sunday");
+						ifContext.addDayBound(week);
+				}
+				else if(dayOfWeek.length==5){
+						week.setSince("monday"); 
+						week.setUntil("friday");
+						ifContext.addDayBound(week);
+				}
+				
+				
+				return ifContext;
+		}
+		
+	
+
 	public TimeOfDay setTimeOfDayNotClockFormat(String clockformat, String higher){
 		TimeOfDay timeofDay=new TimeOfDay();
 		String [] clockFormat=clockformat.split(":");
@@ -323,7 +357,7 @@ public class ContextTranslator {
 			timeofDay.setHigherThan(true);
 		}
 		return timeofDay;
-	}
+	}*/
 	
 	
 	
