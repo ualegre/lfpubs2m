@@ -12,6 +12,7 @@ import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
+import edu.casetools.lfpubs2m.reader.Syntax.CommandType;
 import edu.casetools.lfpubs2m.translation.ContextTranslator;
 import edu.casetools.lfpubs2m.translation.DoTranslator;
 import edu.casetools.lfpubs2m.translation.GeneralConditionTranslator;
@@ -36,22 +37,16 @@ public class LFPUBSPatternReader {
 		 generalCondition1=new GeneralCondition();
 	}
 	
-	public LFPUBSPattern interpretCommand(LFPUBSPattern pattern,String line, Syntax.CommandType commandType, GeneralCondition generalCondition){
+	public LFPUBSPattern interpretCommand(LFPUBSPattern pattern,String line, Syntax.CommandType commandType){
 		line = line.replaceAll("\\s","");
 		switch(commandType){
-			case DAYOFWEEK:
-				p=Pattern.compile(Syntax.DAYOFWEEK);
-				m=p.matcher(line);
-				generalCondition1=interpretGeneralCondition(line);
-				generalCondition1.setGeneralCondition(generalCondition1);
-				break;
 			case ACTION_PATTERN_ID:
 				p = Pattern.compile( Syntax.ACTION_PATTERN_ID_PATTERN );
 				m = p.matcher(line); 
 				if( m.find()) pattern.setId(m.group(1));		
 				break;
 			case IF_CONTEXT:
-				pattern.setContext( interpretIfContext(line, generalCondition1));
+				pattern.setContext( interpretIfContext(line));
 				break;
 			case ON_OCCURS:
 					pattern.setEvent( interpretOnOccurs(line) );
@@ -91,9 +86,8 @@ public class LFPUBSPatternReader {
 		return occurs;
 	}
 	
-	private IfContext interpretIfContext(String line, GeneralCondition generalConditions) {
+	private IfContext interpretIfContext(String line) {
 		IfContext ifContext = new IfContext();
-		ifContext=ifContextTranslator.setContext(ifContext,generalCondition1);
 		ifContext = ifContextTranslator.readContext ( line, ifContext );
 				
 		return ifContext;
@@ -109,4 +103,19 @@ public class LFPUBSPatternReader {
 		return generalCondition;
 	}
 
+	public GeneralCondition interpretCommandGeneralCondition(String line, CommandType commandType,GeneralCondition generalCondition) {
+		line = line.replaceAll("\\s","");
+		switch(commandType){
+			case DAYOFWEEK:
+				p=Pattern.compile(Syntax.DAYOFWEEK);
+				m=p.matcher(line);
+				generalCondition=interpretGeneralCondition(line);
+				generalCondition.setGeneralCondition(generalCondition);
+				break;
+			default:
+				break;
+			}
+		return generalCondition;
+
+}
 }
