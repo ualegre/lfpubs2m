@@ -1,12 +1,15 @@
 package edu.casetools.lfpubs2m.lfpubsdata;
 
+import java.util.Iterator;
 import java.util.Vector;
+import java.util.regex.PatternSyntaxException;
 
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
+import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
 import edu.casetools.lfpubs2m.reader.Syntax;
@@ -19,12 +22,11 @@ public class LFPUBSPattern {
 	Vector<TimeBound> calendar_context;
 	Vector<SensorBound> sensor_context;
 	Vector<Sensor> consequences;
-	Vector<DayBound> day_context;
-	int number;
-	String actuator;
-	int size;
-	String str="states (";
-	
+	Vector<String> day_context;
+	Vector<String>	outputs;
+	String general_context;
+	Boolean actuator;
+	Long aux;
 	String delay;
 	
 	public LFPUBSPattern(){
@@ -32,10 +34,9 @@ public class LFPUBSPattern {
 		calendar_context	 = new Vector<TimeBound>();
 		sensor_context		 = new Vector<SensorBound>();
 		consequences  		 = new Vector<Sensor>();
-		day_context			 = new Vector<DayBound>();
-		number 				 = 0; 
-		size				 = 10;
-	//	actions 	= new Vector<Action>();
+		day_context			 = new Vector<String>();
+		outputs				 = new Vector<String>();
+		actuator			 = false;
 	}
 
 	public void setContext(IfContext context){
@@ -48,13 +49,35 @@ public class LFPUBSPattern {
 		for(int i=0;i<occurs.getSensors().size();i++){
 			events.add( occurs.getSensors().get(i) );
 		}
+		if(occurs.getFrequency()==0){		// all the automation patterns introduced from LFPUBS related with the actuator have frequency=0;
+			this.actuator=true;
+		}
 	}
 
 	public void setAction(ThenDo thenDo) {
 		this.consequences = thenDo.getConsequence();
-		delay = thenDo.getWhenPlus();
+		delay=thenDo.getWhenPlus();
+		if(delay!=null){
+		long aux=Long.valueOf(delay);
+		long h=(long)aux/60/60;
+		long m=((long)aux/60)%60;
+		long s=((long)aux%60);
+		delay=String.format("%02d:%02d:%02d",h,m,s);
+		if(delay.compareTo("00:00:00")==0){
+			delay="00:00:01"; //hau gerotxuo beirau
+		}
+		}
 	}
+	public void addOutput(String output){
+		if(this.outputs!=null){
+			this.outputs.add(output);
+		}
+	}
+	
 
+	public Boolean getActuator() {
+		return actuator;
+	}
 
 	public String getId() {
 		return id;
@@ -82,24 +105,9 @@ public class LFPUBSPattern {
 		return consequences;
 	}
 
-	public Vector<DayBound> getDay_context() {
+
+	public Vector<String> getDay_context() {
 		return day_context;
-	}
-
-	public int getNumber() {
-		return number;
-	}
-
-	public String getActuator() {
-		return actuator;
-	}
-
-	public int getSize() {
-		return size;
-	}
-
-	public String getStr() {
-		return str;
 	}
 
 	public String getDelay() {
@@ -118,202 +126,68 @@ public class LFPUBSPattern {
 	public String printPattern(){
 		String pattern = "";
 
-		if( ( events.size() > 0 ) && ( consequences.size()>0)){
-			
-			pattern = printEventRules();
-			pattern = pattern + printContextRules();
+		if( ( outputs.size() > 0 ) && ( consequences.size()>0)){
 			pattern = pattern + printActionRules();
 
 		}
 		return pattern;
 	}
 	
-	private String printContextRules() {
-		String pattern = "";
-		pattern = printCalendarContextRules(pattern);
-		pattern = printCalendarContextRulesNegation(pattern);
-		pattern = printDayContextRules(pattern);
-		pattern = printDayContextRulesNegation(pattern);
-//		if(sensor_context.size()>0){
-//			for(int i=0;i<sensor_context.size();i++){
-//				if(i!=0) pattern = pattern +" , ";
-//				if(sensor_context.get(i).getUntil() != null){
-//					pattern = printFullSensorContextRules(pattern,sensor_context.get(i));
-//				}else{
-//				//	pattern = printHalfSensorContextRules(pattern,sensor_context.get(i));
-//				}
-//				if(i == (sensor_context.size()-1) ) pattern = pattern + " -> calendar_context"+id+"\n";
-//			}
-//			return pattern;
-//		}
-		return pattern;
-	}
-	private String printDayContextRules(String pattern){
-		for(int i=0;i<day_context.size();i++){
-			pattern=pattern+ " ssr( ( ";
-			pattern=printFullDayContext(pattern,day_context.get(i));
-			pattern = pattern + " ) => day_context_"+id+" ). \n";
-		}
-		return pattern;
-	}
-	private String printDayContextRulesNegation(String pattern){
-		if(day_context.size()>0) pattern = pattern + " ssr( ( ";
-		for(int i=0;i<day_context.size();i++){
-			pattern = pattern + Syntax.NEGATIVE_SIGN;
-			pattern=printFullDayContext(pattern,day_context.get(i));
-		
-		if(i == (day_context.size()-1) ) pattern = pattern + " ) => "+Syntax.NEGATIVE_SIGN+"day_context"+id+" ). \n";
-		}
-		return pattern;
-	}
-
-	private String printCalendarContextRules(String pattern) {
-		for(int i=0;i<calendar_context.size();i++){
-			pattern = pattern + " ssr( ( ";
-			if(calendar_context.get(i).getUntil() != null){
-				pattern = printFullCalendarContextRules(pattern,calendar_context.get(i));
-			}else{
-				pattern = printHalfCalendarContextRules(pattern,calendar_context.get(i));
-			}
-			pattern = pattern + " ) => calendar_context_"+id+" ). \n";
-		}
-		return pattern;
-	}
-
-	private String printCalendarContextRulesNegation(String pattern){
-		if(calendar_context.size()>0) pattern = pattern + " ssr( ( ";
-		for(int i=0;i<calendar_context.size();i++){
-			if(i!=0) pattern = pattern +" , ";
-			if(calendar_context.get(i).getUntil() != null){
-				pattern = pattern + Syntax.NEGATIVE_SIGN;
-				pattern = printFullCalendarContextRules(pattern,calendar_context.get(i));
-			}else{
-				pattern = pattern + Syntax.NEGATIVE_SIGN;
-				pattern = printHalfCalendarContextRules(pattern,calendar_context.get(i));
-			}
-			if(i == (calendar_context.size()-1) ) pattern = pattern + " ) => "+Syntax.NEGATIVE_SIGN+"calendar_context"+id+" ). \n";
-		}
-		return pattern;
-	}
-	
-		
-		private String printFullCalendarContextRules(String pattern,TimeBound bound){
-			if(bound.getSince().isHigherThan()){
-			pattern = pattern  +"clockBetween("+bound.getSince().getTimeOfDayClockFormat()+
-					Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+")";
-			}else{
-				pattern = pattern  +"clockBetween("+bound.getUntil().getTimeOfDayClockFormat()+
-						Syntax.CLOCK_SEPARATOR+bound.getSince().getTimeOfDayClockFormat()+")";
-			}
-			return pattern;
-		}
-		private String printFullDayContext(String pattern, DayBound bound){
-			pattern=pattern+"weekDayBetween("+bound.getSince() +Syntax.CLOCK_SEPARATOR+bound.getUntil()+")";
-			return pattern;
-		}
-		
-		private String printHalfCalendarContextRules(String pattern,TimeBound bound){
-			if(bound.getSince().isHigherThan()){
-			pattern = pattern  +"clockBetween("+bound.getSince().getTimeOfDayClockFormat()+
-					Syntax.CLOCK_SEPARATOR+"23:59:5)";
-			}else{
-				pattern = pattern  +"clockBetween(00:00:00"+
-						Syntax.CLOCK_SEPARATOR+bound.getSince().getTimeOfDayClockFormat()+")";
-			}
-			return pattern;
-		}
-
-	private String printEventRules(){
-		String auxiliar_comma[] = {"",","};
-		String pattern = "";
+	private String printActionRules(){
+		String act="";
+		String pattern = "",auxiliar_pattern = "",final_pattern="", auxiliar_pattern_2="";;
+		String auxiliar_comma[] = {""," , "};
+		String auxiliar_and[] = {""," ^ "};
+		Vector<String>multipleContext=new Vector<String>();
+		Vector<Integer>positions=new Vector<Integer>();
+		int k=0;
 		int j = 0;
-		if(events.size()>0) pattern = pattern +" ssr( ( ";
+		int numb=0;
+		auxiliar_pattern=auxiliar_pattern + " ssr( ( ";
+				if(events.size()!=0){
+					auxiliar_pattern=auxiliar_pattern+"[-]["+delay+"]";
+				}
 		for(int i=0;i<events.size();i++){
-			if(events.size()==1){
-				pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId()+" ) =>EPAS_"+id+" ). \n";
+			auxiliar_pattern=auxiliar_pattern+auxiliar_and[j]+events.get(i).getStatus()+events.get(i).getId().substring(0, events.get(i).getId().length()-2);
+			if(j==0){
+				j++;
 			}
-				else if(i!=events.size()-1){
-					pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId()+" ) =>EPAS_"+id+" ). \n";
-					pattern = pattern +" ssr( ( ";
-				}
-				else{
-					pattern = pattern + auxiliar_comma[j]+events.get(i).getStatus()+events.get(i).getId()+" ) =>EPAS_"+id+" ). \n";
-				}
 		}
-		if(events.size()>0) pattern = pattern +" ssr( ( ";
-		for(int i=0;i<events.size();i++){
-			if(events.size()==1){
-			pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) =>"+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
-		}
-			else if(i!=events.size()-1){
-				pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
-				pattern = pattern +" ssr( ( ";
+		for(int i=1;i<outputs.size();i++){
+			if(outputs.get(i).contains("day_context")==false){
+				auxiliar_pattern=auxiliar_pattern+auxiliar_and[j]+outputs.get(i);
+				if(j==0){
+					j++;
+				}
 			}
 			else{
-				pattern = pattern + events.get(i).getNegatedStatus()+events.get(i).getId() +" ) => "+Syntax.NEGATIVE_SIGN+"EPAS_"+id+" ). \n";
-			}
-			
-		}
-		return pattern;
-}
-
-
-	
-	private String printActionRules(){
-		actuator="Kettle";
-		String act="";
-		String pattern = "",auxiliar_pattern = "";
-		String auxiliar_comma[] = {""," , "};
-		int j = 0;
-		auxiliar_pattern = auxiliar_pattern + " ssr( ( ";
-		if( events.size() > 0 ){
-			auxiliar_pattern = auxiliar_pattern + "[-]["+delay+"]EPAS_"+id;
-			j++;
-		}
-		if( sensor_context.size() > 0 ){
-			auxiliar_pattern = auxiliar_pattern + auxiliar_comma[j]+"[-]["+delay+"]sensor_context_"+id;
-			if(j==0)j++;
-		}
-		if( calendar_context.size() > 0 ){
-			auxiliar_pattern = auxiliar_pattern + auxiliar_comma[j]+"calendar_context_"+id;
-		}
-		if(	day_context.size() >0){
-			auxiliar_pattern = auxiliar_pattern + auxiliar_comma[j]+"day_context_"+id;
-		}
-
-		for(int i=0;i<consequences.size();i++){
-			if(consequences.get(i).getId().contains(actuator)==true){
-				pattern = pattern + auxiliar_pattern + " ) => " + consequences.get(i).getStatus()+consequences.get(i).getId() +" ). \n";
-				actuator=consequences.get(i).getId();
-				for(int z=0;z<Integer.valueOf(id);z++){
-					if(z!=Integer.valueOf(id)-1==true){
-					act=act+"Pattern_"+z+",";
-				}
-					else{
-						act=act+"Pattern_"+z;
-					}
-				}
-				pattern = pattern + " ssr( ("+act+" )=> "+actuator+" ).\n";
+				positions.add(i);
 				
 			}
-			else{
-			
-			pattern = pattern + auxiliar_pattern + " ) => " + consequences.get(i).getStatus()+consequences.get(i).getId() +" ). \n";
-			pattern = pattern + auxiliar_pattern + " ) => Pattern_"+id+" ).\n";
-			
 		}
-			
+		if(positions.size()!=0){
+			for(int i=0;i<positions.size();i++){
+				final_pattern=final_pattern+auxiliar_pattern+auxiliar_and[j]+outputs.get(positions.get(i))+" ) -> "+outputs.get(0)+" ); \n";
+				
+			}
+		}
+		else{
+			final_pattern=auxiliar_pattern+" ) -> "+outputs.get(0)+" ); \n";
+		}
+		
+			j=0;			
+		if(actuator==true){
+			for(int i=0;i<consequences.size();i++){
+			pattern=pattern+" ssr( ("+outputs.get(0)+" ) ->"+consequences.get(i).getStatus()+consequences.get(i).getId().substring(0, consequences.get(i).getId().length()-2)+ " ); \n";;
+			//pattern=pattern+consequences.get(i).getStatus()+consequences.get(i).getId().substring(0, consequences.get(i).getId().length()-2)+ " ) \n";
+			}
+			auxiliar_pattern=final_pattern+pattern;
+		}
+		else{
+			auxiliar_pattern=final_pattern;
+		}
+		return auxiliar_pattern;	
 		}
 	
-		return pattern;
-	}
-	public String writeStructure(String str){
-		for(int i=0;i<events.size();i++){
-		str= str+events.get(i).getId()+",";
-
-	}
-		return str;
 	}
 
-	
-}

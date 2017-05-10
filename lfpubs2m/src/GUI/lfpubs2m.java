@@ -5,14 +5,12 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 
-
 public class lfpubs2m extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	private JPanel jContentPane = null;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
 		
 	}
 	public void run() {

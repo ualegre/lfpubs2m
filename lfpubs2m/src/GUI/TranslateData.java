@@ -39,7 +39,6 @@ public class TranslateData extends JFrame {
 	private JScrollPane jScrollPaneShowRules=null;
 	private JScrollPane	jScrollPaneShowPatterns=null;
 	private String file;
-	public LFPUBS2MTranslator translator = new LFPUBS2MTranslator(true);
 	
 	//private LFPUBS2MTranslator translator=new LFPUBS2MTranslator(true);
 	
@@ -66,7 +65,7 @@ public class TranslateData extends JFrame {
 				gridBagConstraints.gridy = 0;
 				jPanelimport= new JPanel();
 				jPanelimport.setLayout(null);
-				jPanelimport.setBounds(new Rectangle(20, 16, 550, 700));
+				jPanelimport.setBounds(new Rectangle(74, 16, 550, 320));
 				jPanelimport.setBorder(BorderFactory.createTitledBorder("LFPUBS Patterns"));
 				jPanelimport.add(getJTextAreaShowPatterns(),null);
 				jPanelimport.add(getJButtonShowPatterns(), null);
@@ -76,15 +75,14 @@ public class TranslateData extends JFrame {
 		private JButton getJButtonShowPatterns(){
 			if(jBunttonShowPatterns==null){
 				jBunttonShowPatterns= new JButton();
-				jBunttonShowPatterns.setBounds(new Rectangle(365,650,150,22));
+				jBunttonShowPatterns.setBounds(new Rectangle(365,280,150,22));
 				jBunttonShowPatterns.setText("Show Patterns");
 				jBunttonShowPatterns.addActionListener(new java.awt.event.ActionListener(){
 					public void actionPerformed(java.awt.event.ActionEvent e){
+						LFPUBS2MTranslator translator = new LFPUBS2MTranslator(true);
 						translator.setFileName(file);
 						writeLFPUBS(translator);
 					}
-
-					
 				});
 			}
 			return jBunttonShowPatterns;
@@ -94,7 +92,7 @@ public class TranslateData extends JFrame {
 			if(jTextAreaShowPatterns==null){
 				jTextAreaShowPatterns=new JTextArea();
 				jScrollPaneShowPatterns=new JScrollPane(jTextAreaShowPatterns);
-				jScrollPaneShowPatterns.setBounds(new Rectangle(15,20,500,600));
+				jScrollPaneShowPatterns.setBounds(new Rectangle(15,20,500,250));
 				jScrollPaneShowPatterns.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 				jScrollPaneShowPatterns.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			}
@@ -105,11 +103,11 @@ public class TranslateData extends JFrame {
 		private JButton getJButtonTranslate() {
 			if(jButtonTranslate==null){
 				jButtonTranslate=new JButton();
-				jButtonTranslate.setBounds(new Rectangle(365,650,150,22));
+				jButtonTranslate.setBounds(new Rectangle(365,280,150,22));
 				jButtonTranslate.setText("Translate");
 				jButtonTranslate.addActionListener(new java.awt.event.ActionListener(){
 					public void actionPerformed(java.awt.event.ActionEvent e){
-						jTextAreaShowRules.append(""+translator.getTranslation(file));
+					
 					}
 				});
 			}
@@ -119,7 +117,7 @@ public class TranslateData extends JFrame {
 			if(jPanelShow==null){
 				jPanelShow = new JPanel();
 				jPanelShow.setLayout(null);
-				jPanelShow.setBounds(new Rectangle(625,16, 850, 700));
+				jPanelShow.setBounds(new Rectangle(680,16, 550, 320));
 				jPanelShow.setBorder(BorderFactory.createTitledBorder("M Rules"));
 				jPanelShow.add(getJTextAreaShowRules(),null);
 				jPanelShow.add(getJButtonTranslate(),null);
@@ -131,7 +129,7 @@ public class TranslateData extends JFrame {
 			if(jTextAreaShowRules==null){
 			jTextAreaShowRules = new JTextArea();
 			jScrollPaneShowRules= new JScrollPane(jTextAreaShowRules);
-			jScrollPaneShowRules.setBounds(new Rectangle(15,20,750,600));
+			jScrollPaneShowRules.setBounds(new Rectangle(15,20,500,250));
 			jScrollPaneShowRules.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			jScrollPaneShowRules.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			//jScrollPaneShowRules.setBorder(BorderFactory.createTitledBorder("Translated Patterns"));
@@ -149,8 +147,7 @@ public class TranslateData extends JFrame {
 				while(line != null){
 					line = line.replaceAll("\\s","");
 					if(debug){
-						jTextAreaShowPatterns.append(""+line+" \n");
-						line=bufferedReader.readLine();
+						jTextAreaShowPatterns.append(""+line);
 					}
 				}
 

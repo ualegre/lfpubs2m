@@ -17,5 +17,14 @@ public class DayOfWeek {
 	public void setDay(String day) {
 		this.day = day;
 	}
+	public boolean isWeekday(String day){
+		if((day.equals("saturday")==true)||(day.equals("sunday")==true)){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	
 	
 }

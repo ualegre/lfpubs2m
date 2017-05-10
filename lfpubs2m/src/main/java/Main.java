@@ -1,23 +1,30 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
-
-import GUI.lfpubs2m;
 import edu.casetools.lfpubs2m.LFPUBS2MTranslator;
+import GUI.lfpubs2m;
 
 public class Main {
-	
 	static lfpubs2m gui= new lfpubs2m();
-	
-
 	public static void main(String[] args){
 		gui.run();
-		//System.out.println("Initializing...");
 		LFPUBS2MTranslator translator = new LFPUBS2MTranslator(true);
-		System.out.println("- - - - - - - - - - - - - - - - - - -");
-		//System.out.println(""+translator.getTranslation("/Users/mdx/git/lfpubs2m/lfpubs2m/examples/LFPUBS_Output_0.txt"));
-		System.out.println(""+translator.getTranslation("./examples/LFPUBS_Output_2.txt")); //Select an LFPUBS output file
-		System.out.println("- - - - - - - - - - - - - - - - - - -");
-		System.out.println("Ending...");
+		try{
+			File file=new File("./results/lfpubs2mes.mtpl");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			PrintWriter writer = new PrintWriter(bw);
+			writer.println("");
+			writer.print(""+translator.getTranslation("./examples/LFPUBS_Output_9.txt"));
+			writer.print("");
+			writer.close();
+		}
+		catch(Exception error){	
+			System.out.println("Error Message: " + error.getMessage());
+		}
+		
 	}
 
 }
