@@ -1,20 +1,12 @@
 package edu.casetools.lfpubs2m.translation;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.ContextSensor;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayOfWeek;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.reader.Syntax;
 
 

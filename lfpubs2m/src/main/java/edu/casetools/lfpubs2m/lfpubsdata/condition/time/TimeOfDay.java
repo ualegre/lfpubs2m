@@ -1,6 +1,5 @@
 package edu.casetools.lfpubs2m.lfpubsdata.condition.time;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
+
 public class TimeOfDay {
 	String hour;
 	String minute;

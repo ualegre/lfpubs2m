@@ -2,20 +2,17 @@ package GUI;
 
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
-
-import javax.swing.JFrame;
 
 public class LoadingData extends JFrame{
 

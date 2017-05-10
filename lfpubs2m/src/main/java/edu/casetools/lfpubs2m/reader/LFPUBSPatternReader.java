@@ -3,7 +3,6 @@ package edu.casetools.lfpubs2m.reader;
 
 
 
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

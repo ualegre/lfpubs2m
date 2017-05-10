@@ -3,7 +3,6 @@ package edu.casetools.lfpubs2m.lfpubsdata.condition;
 import java.util.Vector;
 
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
 
 

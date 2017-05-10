@@ -1,29 +1,23 @@
 package edu.casetools.lfpubs2m;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 import edu.casetools.lfpubs2m.lfpubsdata.LFPUBSPattern;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
-import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
 import edu.casetools.lfpubs2m.reader.LFPUBSPatternReader;
 import edu.casetools.lfpubs2m.reader.Syntax;
 import edu.casetools.lfpubs2m.reader.Syntax.CommandType;
-import edu.casetools.lfpubs2m.lfpubsdata.GeneralCondition;
 
 
 public class LFPUBS2MTranslator {

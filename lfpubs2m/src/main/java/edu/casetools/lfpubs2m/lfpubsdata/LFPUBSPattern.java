@@ -1,18 +1,13 @@
 package edu.casetools.lfpubs2m.lfpubsdata;
 
-import java.util.Iterator;
 import java.util.Vector;
-import java.util.regex.PatternSyntaxException;
 
 import edu.casetools.lfpubs2m.lfpubsdata.action.ThenDo;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.IfContext;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.sensor.SensorBound;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.DayBound;
 import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
-import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeOfDay;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Occurs;
 import edu.casetools.lfpubs2m.lfpubsdata.events.Sensor;
-import edu.casetools.lfpubs2m.reader.Syntax;
 
 
 public class LFPUBSPattern {

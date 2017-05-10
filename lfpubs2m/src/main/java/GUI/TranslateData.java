@@ -3,28 +3,17 @@ package GUI;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.text.ParseException;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import java.io.BufferedReader;
 
 import edu.casetools.lfpubs2m.LFPUBS2MTranslator;
-import GUI.LoadingData;
-
-import javax.swing.JFrame;
 
 public class TranslateData extends JFrame {
 
