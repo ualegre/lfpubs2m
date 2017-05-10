@@ -3,7 +3,6 @@ package GUI;
 import java.awt.Rectangle;
 import java.io.File;
 
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -11,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 
 public class LoadingData extends JFrame{
@@ -19,7 +17,6 @@ public class LoadingData extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	JPanel jPanel = null;  //  @jve:decl-index=0:visual-constraint="10,434"
-	private JLabel jLabel = null;
 	private JButton jButton = null;
     private JFileChooser fc = null;
 	private JTextField jTextField = null;
@@ -27,9 +24,6 @@ public class LoadingData extends JFrame{
 	private JButton acceptButton = null;
 	private JProgressBar jProgressBar = null;
 	private File file;
-	private ButtonGroup SequencesVSOneToOne = new ButtonGroup();
-	
-	private JRadioButtonMenuItem jRadioButtonMenuItemOneToOneRelations = null;
 	
 	public LoadingData() {
 		//super();

@@ -129,15 +129,11 @@ public class LFPUBSPattern {
 	}
 	
 	private String printActionRules(){
-		String act="";
-		String pattern = "",auxiliar_pattern = "",final_pattern="", auxiliar_pattern_2="";;
-		String auxiliar_comma[] = {""," , "};
+		String pattern = "", auxiliar_pattern = "",final_pattern="";
 		String auxiliar_and[] = {""," ^ "};
-		Vector<String>multipleContext=new Vector<String>();
 		Vector<Integer>positions=new Vector<Integer>();
-		int k=0;
 		int j = 0;
-		int numb=0;
+		
 		auxiliar_pattern=auxiliar_pattern + " ssr( ( ";
 				if(events.size()!=0){
 					auxiliar_pattern=auxiliar_pattern+"[-]["+delay+"]";

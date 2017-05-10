@@ -11,17 +11,12 @@ import edu.casetools.lfpubs2m.reader.Syntax;
 
 
 public class ContextTranslator {
-
 	
 	private String[] separateDataOR = null;
 	private String[] separateDataAND = null;
-	private String   joinedData   = null;
 	private Pattern p;
 	private Matcher m;
 	private boolean debug;
-	private String [] wholeWeek={"monday","tuesday","wednesday","thursday","friday","saturday","sunday"};
-	private String [] weekdays={"monday","tuesday","wednesday","thursday","friday"};
-	//private 
 	
 	public ContextTranslator(boolean debug){
 		this.debug = debug;

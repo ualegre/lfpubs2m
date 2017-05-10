@@ -29,7 +29,6 @@ public class LFPUBS2MTranslator {
 	private 	  BufferedReader   		 bufferedReader;
 	private 	  LFPUBSPatternReader 			 inputInterpreter;
 	private 	  boolean				 debug;
-	private 	  final static String newline = "\n";
 	private 	  GeneralCondition generalCondition=new GeneralCondition();
 	private  	  HashMap<String,Integer> states=new HashMap<String,Integer>();
 	private  	  HashMap<String, Object> context=new HashMap<String, Object>();
@@ -204,7 +203,7 @@ public class LFPUBS2MTranslator {
 				}
 			}
 			else{
-				Iterator it= context.keySet().iterator();
+				Iterator<String> it= context.keySet().iterator();
 				while(it.hasNext()){
 					String key= (String) it.next();
 					if(key.contains("actionMap_day_context")==true){
@@ -228,11 +227,7 @@ public class LFPUBS2MTranslator {
 		Vector<DayBound>generalDayBound=new Vector<DayBound>();
 		DayBound generalCondition=new DayBound();
 		String[] weekDays={"monday", "tuesday", "wednesday", "thursday", "friday"};
-		String [] weekends={"saturday", "sunday"};
-		String [] separatedDays={"monday", "wednesday","friday"};
-		String[] week={"monday", "tuesday", "wednesday", "thursday", "friday","saturday", "sunday"};
-		//String auxiliar_comma[] = {""," ^ "};
-		int j=0;
+		String[] weekends={"saturday", "sunday"};
 	
 			if(dayOfWeek.size()==7){
 				generalCondition.setSince("monday");
@@ -338,7 +333,7 @@ public class LFPUBS2MTranslator {
 	}
 
 	private String DefineCalendarContext(Vector<TimeBound> calendar_context, TimeBound timebound, String time_context, TimeBound narrowestTimeBound) {
-		String output="";
+
 		for(int j=0;j<calendar_context.size();j++){
 			if(calendar_context.get(j).getUntil()!=null){
 				if(calendar_context.get(j).getUntil().getMiliseconds()<generalCondition.getTimebound().getUntil().getMiliseconds()){
@@ -467,7 +462,7 @@ public class LFPUBS2MTranslator {
 	}
 	
 	public String printIndepentStates(){
-		Iterator it=states.keySet().iterator();
+		Iterator<String> it=states.keySet().iterator();
 		String pattern="";
 		while(it.hasNext()){
 			String key = (String) it.next();
@@ -486,7 +481,7 @@ public class LFPUBS2MTranslator {
 	
 	private String printInitialStatus(){
 		String pattern="";
-	Iterator it=states.keySet().iterator();
+	Iterator<String> it=states.keySet().iterator();
 	while(it.hasNext()){
 		String key=(String) it.next();
 		if((key.contains("Pat")==false)&&(key.contains("context")==false)){
@@ -511,7 +506,7 @@ public class LFPUBS2MTranslator {
 		String auxiliar_comma[] = {""," , "};
 		int j=0;
 		String pattern=" states( ";
-		Iterator it=states.keySet().iterator();
+		Iterator<String> it=states.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
 			if(states.get(key).intValue()>0){
@@ -530,10 +525,9 @@ public class LFPUBS2MTranslator {
 	}
 	
 	String printContext(){
-		String auxiliar_comma[] = {""," ^ "};
-		int j=0;
 		String pattern="";
-		Iterator it=context.keySet().iterator();
+		Iterator<String> it=context.keySet().iterator();
+		
 		while(it.hasNext()){
 			String key=(String) it.next();
 			if(key.contains("time_context")==true){
@@ -561,8 +555,7 @@ public class LFPUBS2MTranslator {
 	}
 	public String printDayContext(String rule, Object Daybound){
 		String pattern="";
-		//String auxiliar_comma[] = {""," ^ "};
-		int j=0;
+		
 		DayBound bound=(DayBound) Daybound;
 			if(bound.getUntil()==null){
 				pattern=pattern+" ssr( ( weekDayAt("+bound.getSince()+" ) ) -> "+rule+" ) \n";

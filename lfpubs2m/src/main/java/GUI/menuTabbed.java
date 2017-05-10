@@ -12,8 +12,6 @@ import javax.swing.JTabbedPane;
 
 public class menuTabbed {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * This is the default constructor
 	 */

@@ -17,7 +17,7 @@ import edu.casetools.lfpubs2m.LFPUBS2MTranslator;
 
 public class TranslateData extends JFrame {
 
-	private final static String newline = "\n"; 
+	private static final long serialVersionUID = 4688574348799600963L;
 	private JPanel  jPanelTranslateData=null;
 	private JPanel jPanelimport=null;
 	private JPanel jPanelShow=null;
