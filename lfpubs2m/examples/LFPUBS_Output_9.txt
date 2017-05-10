@@ -3,7 +3,7 @@ Action Map 0
 
 (General Conditions)
 
- context (DayOfWeek (=,Monday,Tuesday,Wednesday,Thursday,Friday))& context (TimeOfDay(>,09:18:07)) & context (TimeOfDay(<,09:25:10))
+ context (DayOfWeek (=,Monday,Wednesday,Thursday,Friday))& context (TimeOfDay(>,09:18:07)) & context (TimeOfDay(<,09:25:10))
 
 (Action Pattern 0)
 ON occurs (simple,(OFF,Entrance (0)), t0) Frequency: 18

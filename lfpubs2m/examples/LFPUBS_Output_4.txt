@@ -1,0 +1,62 @@
+
+Action Map 0
+
+(General Conditions)
+
+ context (DayOfWeek (=,Tuesday,Wednesday,Thursday,Friday,Monday))& context (TimeOfDay(>,09:19:16)) & context (TimeOfDay(<,09:27:41))
+
+(Action Pattern 0)
+ON occurs (unordered,((ON,Kettle (0))&(OFF,CorridorFrontMove (0)),t0) Frequency:20
+IF context(( ) (Priority: -1))
+THEN do (simple,(ON,ToiletMove (0)), t) when: t = t0 + 29.0 s. 
+
+(Action Pattern 1)
+ON occurs (simple,(ON,CorridorMove (0)), t0) Frequency: 32
+IF context()
+THEN do (unordered,((ON,Kettle (0))&(OFF,CorridorFrontMove (0)), t) when: t = t0 + 16.0 s. 
+
+(Action Pattern 2)
+ON occurs (simple,(ON,CorridorFrontMove (0)), t0) Frequency: 11
+IF context(( ) (Priority: -1))
+THEN do (unordered,((ON,Kettle (0))&(OFF,CorridorFrontMove (0)), t) when: t = t0 + 6.0 s. 
+
+(Action Pattern 3)
+ON occurs (simple,(ON,CorridorFrontMove (0)), t0) Frequency: 20
+IF context(( (time(<=,33792.0))) (Priority: 0))
+THEN do (simple,(ON,CorridorMove (0)), t) when: t = t0 + 4.0 s. 
+
+(Action Pattern 4)
+ON occurs (simple,(OFF,ToiletMove (0)), t0) Frequency: 17
+IF context()
+THEN do (simple,(ON,CorridorMove (0)), t) when: t = t0 + 55.0 s. 
+
+(Action Pattern 5)
+ON occurs (simple,(OFF,BedroomDoor (0)), t0) Frequency: 14
+IF context()
+THEN do (simple,(ON,CorridorFrontMove (0)), t) when: t = t0 + 0.0 s. 
+
+(Action Pattern 6)
+ON occurs (simple,(ON,BedroomDoor (0)), t0) Frequency: 17
+IF context()
+THEN do (simple,(OFF,BedroomDoor (0)), t) when: t = t0 + 1.0 s. 
+
+(Action Pattern 7)
+ON occurs (simple,(OFF,LightBedroom (0)), t0) Frequency: 24
+IF context()
+THEN do (simple,(ON,BedroomDoor (0)), t) when: t = t0 + 12.0 s. 
+
+(Action Pattern 8)
+ON occurs (simple,(ON,LightBedroom (0)), t0) Frequency: 24
+IF context()
+THEN do (simple,(OFF,LightBedroom (0)), t) when: t = t0 + 151.0 s. 
+
+(Action Pattern 9)
+ON occurs (simple,(ON,ToiletMove (0)), t0) Frequency: 19
+IF context()
+THEN do (simple,(OFF,ToiletMove (0)), t) when: t = t0 + 247.0 s. 
+
+(Action Pattern 10)
+ON occurs (simple,(ON,ToiletMove (0) ), t0) Frequency: 0
+IF context ()
+THEN do (unordered,((ON,Kettle (0))&(OFF,CorridorFrontMove (0)), t) when: t = t0 + 158.0 s. 
+

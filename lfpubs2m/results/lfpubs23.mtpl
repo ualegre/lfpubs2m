@@ -1,0 +1,10 @@
+
+ states( Entrance , Kettle); 
+ is( Entrance ); 
+ 
+
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Kettle ,0 ); 
+ 
+ ssr( ( [-][00:00:05]Entrance) -> Kettle); 
+ 

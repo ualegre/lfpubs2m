@@ -571,20 +571,20 @@ public class LFPUBS2MTranslator {
 		int j=0;
 		DayBound bound=(DayBound) Daybound;
 			if(bound.getUntil()==null){
-				pattern=pattern+" ssr( ( weekDayAt("+bound.getSince()+" ) ) -> "+rule+" ) \n";
-				pattern=pattern+" ssr( ("+Syntax.NEGATIVE_SIGN+"weekDayAt("+bound.getSince()+" ) ) -> "+Syntax.NEGATIVE_SIGN+rule+" ) \n";
+				pattern=pattern+" ssr( ( weekDayAt("+bound.getSince()+" ) ) -> "+rule+" ); \n";
+				pattern=pattern+" ssr( ("+Syntax.NEGATIVE_SIGN+"weekDayAt("+bound.getSince()+" ) ) -> "+Syntax.NEGATIVE_SIGN+rule+" ); \n";
 				}
 			else{
-				pattern=pattern+" ssr( ( weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+rule+" ) \n";
-				pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+Syntax.NEGATIVE_SIGN+rule+" ) \n";
+				pattern=pattern+" ssr( ( weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+rule+" ) ;\n";
+				pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+Syntax.NEGATIVE_SIGN+rule+" ); \n";
 			}
 			
 		return pattern;
 	}
 	public String printSensorContext(String rule, Object Sensorbound){
 		SensorBound bound=(SensorBound) Sensorbound;
-		String pattern=" ssr( ( sensorBetween("+ bound.getSince().getStatus()+bound.getSince().getId()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getStatus()+bound.getUntil().getId()+" ) ->"+rule+") \n";
-		pattern=pattern+ " ssr( ( sensorBetween("+ bound.getSince().getNegatedStatus()+bound.getSince().getId()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getNegatedStatus()+bound.getUntil().getId()+" ) ->"+rule+") \n";
+		String pattern=" ssr( ( sensorBetween("+ bound.getSince().getStatus()+bound.getSince().getId()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getStatus()+bound.getUntil().getId()+" ) ->"+rule+"); \n";
+		pattern=pattern+ " ssr( ( sensorBetween("+ bound.getSince().getNegatedStatus()+bound.getSince().getId()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getNegatedStatus()+bound.getUntil().getId()+" ) ->"+rule+"); \n";
 		return pattern;
 	}
 

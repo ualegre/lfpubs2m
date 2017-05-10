@@ -1,0 +1,41 @@
+
+ states( Entrance , Corridor , actionMap_day_context , BedroomDoor , Kettle , Pattern_9 , LightBedroom , Pattern_7 , Pattern_8 , Pattern_5 , Pattern_6 , Toilet , Pattern_3 , Pattern_4 , Pattern_1 , Pattern_2 , actionMap_time_context , Pattern_0 ); 
+ is( Entrance ); 
+ is( Corridor ); 
+ is( actionMap_day_context ); 
+ is( BedroomDoor ); 
+ is( LightBedroom ); 
+ is( Toilet ); 
+ is( actionMap_time_context ); 
+
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #actionMap_day_context ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #Kettle ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #Pattern_9 ,0 ); 
+ holdsAt( #LightBedroom ,0 ); 
+ holdsAt( #Pattern_7 ,0 ); 
+ holdsAt( #Pattern_8 ,0 ); 
+ holdsAt( #Pattern_5 ,0 ); 
+ holdsAt( #Pattern_6 ,0 ); 
+ holdsAt( #Toilet ,0 ); 
+ holdsAt( #Pattern_3 ,0 ); 
+ holdsAt( #Pattern_4 ,0 ); 
+ holdsAt( #LightBedroom ,0 ); 
+ holdsAt( #Pattern_1 ,0 ); 
+ holdsAt( #Pattern_2 ,0 ); 
+ holdsAt( #actionMap_time_context ,0 ); 
+ holdsAt( #Pattern_0 ,0 ); 
+
+ 
+ ssr( ( [-][00:00:01]#Entrance ) -> Pattern_0 ); 
+
+ 
+ ssr( ( [-][00:00:01]Toilet ^ Pattern_0 ) -> Kettle ); 
+
+ 
+ 

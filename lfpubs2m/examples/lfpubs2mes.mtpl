@@ -1,0 +1,146 @@
+
+ states( Shower_0 , Pattern_9 , Pattern_7 , Pattern_8 , Pattern_5 , Pattern_6 , Pattern_3 , Pattern_4 , Pattern_1 , Pattern_2 , Cabinet_0 , day_context_1 , time_context_8 , BathroomLights_0 , BathroomFan_0 , time_context_1 , Pattern_11 , Pattern_10 , Gel_0 , EPAS_15 , EPAS_1 , EPAS_11 , EPAS_12 , EPAS_7 , EPAS_2 , EPAS_3 , EPAS_4 , Bathroom_0 , Pattern_17 , Pattern_16 , Pattern_15 , Pattern_14 , Pattern_13 , Pattern_12 , Mouthwash_0 , Towel_0 , Alarm_0 ); 
+ is( #time_context_8 ); 
+ is( Shower_0 ); 
+ is( #time_context_1 ); 
+ is( #Pattern_1 ); 
+ is( Cabinet_0 ); 
+ is( day_context_1 ); 
+ is( #Pattern_2 ); 
+ is( #Pattern_3 ); 
+ is( #Pattern_4 ); 
+ is( time_context_8 ); 
+ is( #Pattern_5 ); 
+ is( #Pattern_6 ); 
+ is( #Pattern_7 ); 
+ is( #Pattern_8 ); 
+ is( BathroomLights_0 ); 
+ is( #Pattern_9 ); 
+ is( BathroomFan_0 ); 
+ is( time_context_1 ); 
+ is( Gel_0 ); 
+ is( EPAS_15 ); 
+ is( EPAS_1 ); 
+ is( EPAS_11 ); 
+ is( EPAS_12 ); 
+ is( EPAS_7 ); 
+ is( EPAS_2 ); 
+ is( EPAS_3 ); 
+ is( EPAS_4 ); 
+ is( Bathroom_0 ); 
+ is( #Pattern_13 ); 
+ is( Mouthwash_0 ); 
+ is( #Pattern_14 ); 
+ is( #Pattern_15 ); 
+ is( #Pattern_16 ); 
+ is( #Pattern_10 ); 
+ is( Towel_0 ); 
+ is( #Pattern_11 ); 
+ is( #Pattern_12 ); 
+ is( #Pattern_17 ); 
+ is( Alarm_0 ); 
+
+ holdsAt( #time_context_8 ,0 ); 
+ holdsAt( #time_context_1 ,0 ); 
+ holdsAt( #EPAS_12 ,0 ); 
+ holdsAt( #EPAS_15 ,0 ); 
+ holdsAt( #Pattern_1 ,0 ); 
+ holdsAt( #Pattern_2 ,0 ); 
+ holdsAt( #Pattern_3 ,0 ); 
+ holdsAt( #Pattern_4 ,0 ); 
+ holdsAt( #Pattern_5 ,0 ); 
+ holdsAt( #Towel_0 ,0 ); 
+ holdsAt( #Pattern_6 ,0 ); 
+ holdsAt( #Pattern_7 ,0 ); 
+ holdsAt( #Pattern_8 ,0 ); 
+ holdsAt( #Pattern_9 ,0 ); 
+ holdsAt( #EPAS_7 ,0 ); 
+ holdsAt( #EPAS_3 ,0 ); 
+ holdsAt( #EPAS_4 ,0 ); 
+ holdsAt( #EPAS_1 ,0 ); 
+ holdsAt( #EPAS_2 ,0 ); 
+ holdsAt( #Gel_0 ,0 ); 
+ holdsAt( #Pattern_13 ,0 ); 
+ holdsAt( #Pattern_14 ,0 ); 
+ holdsAt( #Pattern_15 ,0 ); 
+ holdsAt( #Pattern_16 ,0 ); 
+ holdsAt( #Pattern_10 ,0 ); 
+ holdsAt( #Pattern_11 ,0 ); 
+ holdsAt( #Pattern_12 ,0 ); 
+ holdsAt( #EPAS_11 ,0 ); 
+ holdsAt( #Pattern_17 ,0 ); 
+
+
+ ssr( ( Alarm_0 ) ->EPAS_1 ); 
+ ssr( ( #Alarm_0 ) ->#EPAS_1 ); 
+ ssr( ( clockBetween(08:15:14-08:31:33 ) ) ->time_context_1 ); 
+ ssr( ( #clockBetween(08:15:14-08:31:33 ) ) ->#time_context_1 ); 
+ ssr( ( weekDayBetween(Monday-Friday) ) ->day_context_1 ); 
+ ssr( ( [-][00:12:47]EPAS_1 ^ time_context_1 ^ day_context_1 ) -> Pattern_1 ); 
+ ssr( ( [-][00:12:47]EPAS_1 ^ time_context_1 ^ day_context_1 ) -> Bathroom_0 ); 
+
+ ssr( ( Bathroom_0 ) ->EPAS_2 ); 
+ ssr( ( #Bathroom_0 ) ->#EPAS_2 ); 
+ ssr( ( [-][00:00:02]EPAS_2 ^ time_context_1 ^ day_context_1 ) -> Pattern_2 ); 
+ ssr( ( [-][00:00:02]EPAS_2 ^ time_context_1 ^ day_context_1 ) -> BathroomLights_0 ); 
+
+ ssr( ( BathroomLights_0 ) ->EPAS_3 ); 
+ ssr( ( #BathroomLights_0 ) ->#EPAS_3 ); 
+ ssr( ( [-][00:01:12]EPAS_3 ^ time_context_1 ^ day_context_1 ) -> Pattern_3 ); 
+ ssr( ( [-][00:01:12]EPAS_3 ^ time_context_1 ^ day_context_1 ) -> Cabinet_0 ); 
+
+ ssr( ( Cabinet_0 ) ->EPAS_4 ); 
+ ssr( ( #Cabinet_0 ) ->#EPAS_4 ); 
+ ssr( ( [-][00:00:05]EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Pattern_4 ); 
+ ssr( ( [-][00:00:05]EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Mouthwash_0 ); 
+
+ ssr( ( [-][00:00:11]EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Pattern_5 ); 
+ ssr( ( [-][00:00:11]EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Towel_0 ^ Gel_0 ); 
+
+ ssr( ( [-][00:00:06]EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Pattern_6 ); 
+ ssr( ( [-][00:00:06]EPAS_4 ^ time_context_1 ^ day_context_1 ) -> #Cabinet_0 ); 
+
+ ssr( ( Mouthwash_0 ) ->EPAS_7 ); 
+ ssr( ( #Mouthwash_0 ) ->#EPAS_7 ); 
+ ssr( ( [-][00:00:01]EPAS_7 ^ time_context_1 ^ day_context_1 ) -> Pattern_7 ); 
+ ssr( ( [-][00:00:01]EPAS_7 ^ time_context_1 ^ day_context_1 ) -> #Cabinet_0 ); 
+
+ ssr( ( clockBetween(08:15:14-08:22:17 ) ) ->time_context_8 ); 
+ ssr( ( #clockBetween(08:15:14-08:22:17 ) ) ->#time_context_8 ); 
+ ssr( ( [-][00:01:34]#EPAS_4 ^ time_context_8 ^ day_context_1 ) -> Pattern_8 ); 
+ ssr( ( [-][00:01:34]#EPAS_4 ^ time_context_8 ^ day_context_1 ) -> Cabinet_0 ); 
+
+ ssr( ( [-][00:02:34]#EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Pattern_9 ); 
+ ssr( ( [-][00:02:34]#EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Shower_0 ); 
+
+ ssr( ( [-][00:01:46]#EPAS_4 ^ time_context_1 ^ day_context_1 ) -> Pattern_10 ); 
+ ssr( ( [-][00:01:46]#EPAS_4 ^ time_context_1 ^ day_context_1 ) -> #BathroomLights_0 ); 
+
+ ssr( ( Towel_0^Gel_0 ) ->EPAS_11 ); 
+ ssr( ( #Towel_0^#Gel_0 ) ->#EPAS_11 ); 
+ ssr( ( [-][00:00:01]EPAS_11 ^ time_context_1 ^ day_context_1 ) -> Pattern_11 ); 
+ ssr( ( [-][00:00:01]EPAS_11 ^ time_context_1 ^ day_context_1 ) -> #Cabinet_0 ); 
+
+ ssr( ( Shower_0 ) ->EPAS_12 ); 
+ ssr( ( #Shower_0 ) ->#EPAS_12 ); 
+ ssr( ( [-][00:04:53]EPAS_12 ^ time_context_1 ^ day_context_1 ) -> Pattern_12 ); 
+ ssr( ( [-][00:04:53]EPAS_12 ^ time_context_1 ^ day_context_1 ) -> #Shower_0 ); 
+
+ ssr( ( [-][00:01:24]#EPAS_12 ^ time_context_1 ^ day_context_1 ) -> Pattern_13 ); 
+ ssr( ( [-][00:01:24]#EPAS_12 ^ time_context_1 ^ day_context_1 ) -> BathroomFan_0 ); 
+
+ ssr( ( [-][00:07:23]#EPAS_12 ^ time_context_1 ^ day_context_1 ) -> Pattern_14 ); 
+ ssr( ( [-][00:07:23]#EPAS_12 ^ time_context_1 ^ day_context_1 ) -> #BathroomLights_0 ); 
+
+ ssr( ( BathroomFan_0 ) ->EPAS_15 ); 
+ ssr( ( #BathroomFan_0 ) ->#EPAS_15 ); 
+ ssr( ( [-][00:03:29]EPAS_15 ^ time_context_1 ^ day_context_1 ) -> Pattern_15 ); 
+ ssr( ( [-][00:03:29]EPAS_15 ^ time_context_1 ^ day_context_1 ) -> #BathroomFan_0 ); 
+
+ ssr( ( [-][00:02:39]#EPAS_15 ^ time_context_1 ^ day_context_1 ) -> Pattern_16 ); 
+ ssr( ( [-][00:02:39]#EPAS_15 ^ time_context_1 ^ day_context_1 ) -> #BathroomLights_0 ); 
+
+ ssr( ( [-][00:00:24]#EPAS_3 ^ time_context_1 ^ day_context_1 ) -> Pattern_17 ); 
+ ssr( ( [-][00:00:24]#EPAS_3 ^ time_context_1 ^ day_context_1 ) -> #Bathroom_0 ); 
+
+
