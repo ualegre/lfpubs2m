@@ -21,8 +21,8 @@ public class Sensor {
 		return status;
 	}
 	public void setStatus(String status) {
-		if(status.equals("off")||status.equals("OFF"))
-		this.status = Syntax.NEGATIVE_SIGN;
+		if(status.equalsIgnoreCase("off"))
+			this.status = Syntax.NEGATIVE_SIGN;
 	}
 	
 	public String getNegatedStatus(){
