@@ -10,7 +10,7 @@ import GUI.lfpubs2m;
 public class Main {
 	static lfpubs2m gui= new lfpubs2m();
 	public static void main(String[] args){
-		//gui.run();
+		gui.run();
 		LFPUBS2MTranslator translator = new LFPUBS2MTranslator(true);
 		try{
 			File file=new File("./results/lfpubs2mes.mtpl");
@@ -26,6 +26,5 @@ public class Main {
 		}
 		
 	}
-
 
 }

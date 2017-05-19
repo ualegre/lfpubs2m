@@ -561,8 +561,8 @@ public class LFPUBS2MTranslator {
 	}
 	public String printCalendarContext(String rule, Object Timebound){
 		TimeBound bound=(TimeBound) Timebound;
-		String pattern=" ssr( ( clockBetween("+bound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+" ) -> "+rule+" ); \n";
-		pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+bound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+" ) -> "+Syntax.NEGATIVE_SIGN+rule+" ); \n";
+		String pattern=" ssr( ( clockBetween("+bound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+" ) ) -> "+rule+" ); \n";
+		pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"clockBetween("+bound.getSince().getTimeOfDayClockFormat()+Syntax.CLOCK_SEPARATOR+bound.getUntil().getTimeOfDayClockFormat()+" ) ) -> "+Syntax.NEGATIVE_SIGN+rule+" ); \n";
 		return pattern;
 	}
 	public String printDayContext(String rule, Object Daybound){
@@ -575,8 +575,8 @@ public class LFPUBS2MTranslator {
 				pattern=pattern+" ssr( ("+Syntax.NEGATIVE_SIGN+"weekDayAt("+bound.getSince()+" ) ) -> "+Syntax.NEGATIVE_SIGN+rule+" ); \n";
 				}
 			else{
-				pattern=pattern+" ssr( ( weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+rule+" ) ;\n";
-				pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"weekdayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+Syntax.NEGATIVE_SIGN+rule+" ); \n";
+				pattern=pattern+" ssr( ( weekDayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+rule+" ) ;\n";
+				pattern=pattern+" ssr( ( "+Syntax.NEGATIVE_SIGN+"weekDayBetween("+bound.getSince()+Syntax.CLOCK_SEPARATOR+bound.getUntil()+" ) ) ->"+Syntax.NEGATIVE_SIGN+rule+" ); \n";
 			}
 			
 		return pattern;
