@@ -430,12 +430,15 @@ public class LFPUBS2MTranslator {
 			String rule="Pattern_"+i;
 			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
 				String consequence=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
-				int find=findPattern(patterns, consequence);
-				if(find!=-1){
-					patterns.get(find).addOutput(rule);
+				Vector<Integer>findPath=new Vector<Integer>();
+				findPath=findPattern(patterns, consequence,findPath);
+				if(findPath.size()==1){
+					patterns.get(findPath.get(0)).addOutput(rule);
 				}
 				else{
-					//patterns.get(i).addOutput(rule);
+					for(int k=0;k<findPath.size();k++){
+						patterns.get(findPath.get(k)).addOutput(rule);
+					}
 				}
 			}
 		}
@@ -443,17 +446,18 @@ public class LFPUBS2MTranslator {
 		return patterns;
 	}
 
-	private int findPattern(Vector<LFPUBSPattern> patterns, String consequence) {
+	private Vector<Integer> findPattern(Vector<LFPUBSPattern> patterns, String consequence, Vector<Integer>findPath) {
+		
 		for(int i=0;i<patterns.size();i++){
 			for(int j=0;j<patterns.get(i).getEvents().size();j++){
 				String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
 				if(consequence.compareTo(event)==0){
-					return i;
+					findPath.add(i);
 				}
 			}
 			
 		}
-		return -1;
+		return findPath;
 	}
 
 	private String printPatterns(Vector<LFPUBSPattern> patterns){
