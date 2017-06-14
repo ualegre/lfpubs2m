@@ -8,7 +8,6 @@ import edu.casetools.lfpubs2m.lfpubsdata.condition.time.TimeBound;
 
 
 public class IfContext {
-	
 	Vector<SensorBound> sensorBound;
 	Vector<TimeBound> 	timeBounds;
 	Vector<String>	dayBound;
@@ -17,6 +16,7 @@ public class IfContext {
 		sensorBound = new Vector<SensorBound>();
 		timeBounds   = new Vector<TimeBound>();
 		dayBound	= new Vector<String>();
+		
 	}
 
 	public Vector<SensorBound> getSensorBound() {
@@ -51,6 +51,11 @@ public class IfContext {
 
 	public void setDayBound(Vector<String> dayBound) {
 		this.dayBound = dayBound;
+	}
+
+	public void addCalendarDay(String dayBound) {
+		this.dayBound.add(dayBound);
+		
 	}
 	
 }

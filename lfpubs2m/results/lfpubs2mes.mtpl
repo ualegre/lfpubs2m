@@ -1,31 +1,34 @@
 
- states( Entrance , Corridor , actionMap_day_context , BedroomDoor , Kettle , Pattern_9 , LightBedroom , Pattern_7 , Pattern_8 , Pattern_5 , Pattern_6 , Toilet , Pattern_3 , Pattern_4 , Pattern_1 , Pattern_2 , actionMap_time_context , Pattern_0 ); 
- is( Entrance ); 
- is( Corridor ); 
+ states( CorridorMove , actionMap_day_context , BedroomDoor , time_context_5 , Kettle , CorridorFrontMove , Pattern_9 , LightBedroom , Pattern_7 , Pattern_8 , Pattern_5 , Pattern_6 , Pattern_3 , Pattern_4 , ToiletMove , Pattern_1 , Pattern_2 , actionMap_time_context , Pattern_0 ); 
+ is( CorridorMove ); 
  is( actionMap_day_context ); 
  is( BedroomDoor ); 
+ is( time_context_5 ); 
+ is( CorridorFrontMove ); 
  is( LightBedroom ); 
- is( Toilet ); 
+ is( ToiletMove ); 
  is( actionMap_time_context ); 
 
- holdsAt( #Entrance ,0 ); 
- holdsAt( #Entrance ,0 ); 
- holdsAt( #Corridor ,0 ); 
- holdsAt( #Corridor ,0 ); 
+ holdsAt( #CorridorMove ,0 ); 
+ holdsAt( #CorridorMove ,0 ); 
  holdsAt( #actionMap_day_context ,0 ); 
+ holdsAt( #CorridorFrontMove ,0 ); 
  holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #ToiletMove ,0 ); 
+ holdsAt( #time_context_5 ,0 ); 
  holdsAt( #Kettle ,0 ); 
  holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #CorridorFrontMove ,0 ); 
  holdsAt( #Pattern_9 ,0 ); 
  holdsAt( #LightBedroom ,0 ); 
  holdsAt( #Pattern_7 ,0 ); 
  holdsAt( #Pattern_8 ,0 ); 
  holdsAt( #Pattern_5 ,0 ); 
  holdsAt( #Pattern_6 ,0 ); 
- holdsAt( #Toilet ,0 ); 
  holdsAt( #Pattern_3 ,0 ); 
- holdsAt( #Pattern_4 ,0 ); 
  holdsAt( #LightBedroom ,0 ); 
+ holdsAt( #Pattern_4 ,0 ); 
+ holdsAt( #ToiletMove ,0 ); 
  holdsAt( #Pattern_1 ,0 ); 
  holdsAt( #Pattern_2 ,0 ); 
  holdsAt( #actionMap_time_context ,0 ); 
@@ -33,36 +36,38 @@
 
  ssr( ( weekDayBetween(monday-friday ) ) ->actionMap_day_context ) ;
  ssr( ( #weekDayBetween(monday-friday ) ) ->#actionMap_day_context ); 
- ssr( ( clockBetween(09:18:07-09:25:10 ) ) -> actionMap_time_context ); 
- ssr( ( #clockBetween(09:18:07-09:25:10 ) ) -> #actionMap_time_context ); 
+ ssr( ( clockBetween(09:19:16-09:27:41 ) ) -> actionMap_time_context ); 
+ ssr( ( #clockBetween(09:19:16-09:27:41 ) ) -> #actionMap_time_context ); 
+ ssr( ( clockBetween(09:19:16-09:23:08 ) ) -> time_context_5 ); 
+ ssr( ( #clockBetween(09:19:16-09:23:08 ) ) -> #time_context_5 ); 
  
- ssr( ( [-][00:00:01]#Entrance ^ actionMap_time_context ^ Pattern_1 ^ actionMap_day_context ) -> Pattern_0 ); 
+ ssr( ( [-][00:02:31]LightBedroom ^ actionMap_time_context ^ actionMap_day_context ) -> Pattern_0 ); 
 
  
- ssr( ( [-][00:00:01]Toilet ^ actionMap_time_context ^ Pattern_2 ^ actionMap_day_context ) -> Pattern_1 ); 
+ ssr( ( [-][00:00:12]#LightBedroom ^ actionMap_time_context ^ Pattern_0 ^ actionMap_day_context ) -> Pattern_1 ); 
 
  
- ssr( ( [-][00:00:05]Corridor ^ actionMap_time_context ^ Pattern_3 ^ actionMap_day_context ) -> Pattern_2 ); 
+ ssr( ( [-][00:00:01]BedroomDoor ^ actionMap_time_context ^ Pattern_1 ^ actionMap_day_context ) -> Pattern_2 ); 
 
  
- ssr( ( [-][00:00:01]Entrance ^ actionMap_time_context ^ Pattern_4 ^ actionMap_day_context ) -> Pattern_3 ); 
+ ssr( ( [-][00:00:01]#BedroomDoor ^ actionMap_time_context ^ Pattern_2 ^ actionMap_day_context ) -> Pattern_3 ); 
 
  
- ssr( ( [-][00:00:05]#BedroomDoor ^ actionMap_time_context ^ Pattern_5 ^ actionMap_day_context ) -> Pattern_4 ); 
+ ssr( ( [-][00:00:05]CorridorFrontMove ^ actionMap_time_context ^ Pattern_3 ^ actionMap_day_context ) -> Pattern_4 ); 
 
  
- ssr( ( [-][00:00:20]BedroomDoor ^ actionMap_time_context ^ Pattern_6 ^ actionMap_day_context ) -> Pattern_5 ); 
+ ssr( ( [-][00:00:32]#CorridorMove ^ time_context_5 ^ Pattern_4 ^ Pattern_8 ^ Pattern_9 ^ actionMap_day_context ) -> Pattern_5 ); 
 
  
- ssr( ( [-][00:00:20]#LightBedroom ^ actionMap_time_context ^ Pattern_7 ^ actionMap_day_context ) -> Pattern_6 ); 
+ ssr( ( [-][00:04:07]ToiletMove ^ actionMap_time_context ^ Pattern_5 ^ actionMap_day_context ) -> Pattern_6 ); 
 
  
- ssr( ( [-][00:03:00]LightBedroom ^ actionMap_time_context ^ Pattern_8 ^ actionMap_day_context ) -> Pattern_7 ); 
+ ssr( ( [-][00:03:28]ToiletMove ^ actionMap_time_context ^ Pattern_5 ^ actionMap_day_context ) -> Pattern_7 ); 
+ ssr( (Pattern_7 ) ->Kettle ); 
 
  
- ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_8 ); 
+ ssr( ( [-][00:00:01]#CorridorFrontMove ^ actionMap_time_context ^ actionMap_day_context ) -> Pattern_8 ); 
 
  
- ssr( ( [-][00:02:21]#Corridor ^ actionMap_time_context ^ Pattern_0 ^ actionMap_day_context ) -> Pattern_9 ); 
- ssr( (Pattern_9 ) ->Kettle ); 
+ ssr( ( [-][00:00:06]Kettle ^ actionMap_time_context ^ Pattern_7 ^ actionMap_day_context ) -> Pattern_9 ); 
 

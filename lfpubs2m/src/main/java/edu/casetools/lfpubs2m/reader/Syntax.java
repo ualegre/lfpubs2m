@@ -52,7 +52,8 @@ public class Syntax {
 	public final static String IF_CONTEXT_FIRST_SEPARATOR    = "OR";
 	public final static String IF_CONTEXT_SECOND_SEPARATOR   = "AND";
 	public final static String IF_CONTEXT_THIRD_SEPARATOR    = ",";
-	public static final String IF_CONTEXT_CALENDAR 	 		 = "time";
+	public static final String IF_CONTEXT_CALENDAR_TIME 	 = "time";
+	public static final String IF_CONTEXT_CALENDAR_DAY	 	 = "day_of_week";
 	public static final String IF_CONTEXT_END 		 		 = ")";
 	public static final String IF_CONTEXT_PATTERN_END 		 = "\\)";
 	public static final String IF_CONTEXT_PRIORITY_PATTERN 	 = "Priority\\:(.*?)"+IF_CONTEXT_PATTERN_END;

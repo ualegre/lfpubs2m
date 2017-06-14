@@ -92,7 +92,11 @@ public class ContextTranslator {
 	private IfContext hasNoAND(IfContext ifContext, String line) {
 		if(isCalendar(line)){
 			hasNoANDCalendar(ifContext,line);
-		}else if(!line.isEmpty()){
+			
+		}else if(isCalendarDay(line)){
+			hasNoANDCalendarDay(ifContext,line);
+		}
+		else if(!line.isEmpty()){
 			hasNoANDSensor(ifContext,line);
 		}
 		return ifContext;
@@ -127,10 +131,38 @@ public class ContextTranslator {
 		}
 		return ifContext;
 	}
+	private IfContext hasNoANDCalendarDay(IfContext ifContext, String line) {
+		Vector<String> dayBound = new Vector<String>();
+		//dayBound.setPriority(getPriority(line));
+		if(debug)System.out.println("PRIORITY: "+getPriority(line));
+		line = removePriority(getPriority(line),line);
+		//System.out.println("VALUE:"+line);
+		String boundData[] = line.split(Syntax.IF_CONTEXT_THIRD_SEPARATOR); 
+		if(boundData.length == 2){
+			if(boundData.length == 2){
+				dayBound.add(boundData[1].toLowerCase());
+				
+			}
+		ifContext.setDayBound(dayBound);
+		}
+		return ifContext;
+	}
+	
+	
+	
+	
 	
 	private boolean isHigherThan(String line){
 		if(line.contains(">")) return true;
 		else return false;
+	}
+	private String getDayOfWeek(String line){
+		int aux=1;
+		if(line.contains("=")) aux=2;
+		for(int i=0;i<aux;i++){
+			line=line.substring(0,line.length()-1);
+		}
+		return line;
 	}
 	
 	private String getSensorName(String line){
@@ -291,74 +323,17 @@ public class ContextTranslator {
 	}
 	
 	private boolean isCalendar(String string) {
-		if(string.contains(Syntax.IF_CONTEXT_CALENDAR)){
+		if(string.contains(Syntax.IF_CONTEXT_CALENDAR_TIME)){
 			return true;
 		}
 		return false;
 	}
-
-	/*public IfContext setContext(IfContext ifContext, GeneralCondition generalCondition) {
-		String smallTime=generalCondition.getTimeOfDaySmall();
-		String bigTime=generalCondition.getTimeOfDayBig();
-		int priority=2;
-		
-		TimeOfDay SmallTime=setTimeOfDayNotClockFormat(smallTime, String.valueOf(0));
-		
-		TimeOfDay BigTime=setTimeOfDayNotClockFormat(bigTime,String.valueOf(1));
-		
-		TimeBound timeBound=new TimeBound(SmallTime, BigTime, priority);
-		ifContext.addCalendarBound(timeBound);
-		
-		String [] dayOfWeek=generalCondition.getDayOfWeek();
-		ifContext=checkDayOfWeek(dayOfWeek, ifContext);
-		
-		return ifContext;
-	}
-	private  IfContext  checkDayOfWeek(String[] dayOfWeek, IfContext ifContext ) {
-		DayBound week=new DayBound();
-			String[] lists = {"sunday","monday","tuesday","wednesday","thursday","friday","saturday"};
-			String [] weekdays={"monday","tuesday","wednesday","thursday","friday"};
-			int a=0;
-			Vector<String>myList=new Vector<String>();
-			for(int i=0;i<lists.length;i++){
-				if(Arrays.asList(dayOfWeek).contains(lists[i])==true){
-					Arrays.asList(dayOfWeek).set(a, lists[i]);
-					a=a+1;
-				}
+	private boolean isCalendarDay(String string){
+		if(string.contains(Syntax.IF_CONTEXT_CALENDAR_DAY)){
+			return true;
 			}
-				if(dayOfWeek.length==7){
-						week.setSince("monday"); 
-						week.setUntil("sunday");
-						ifContext.addDayBound(week);
-				}
-				else if(dayOfWeek.length==5){
-						week.setSince("monday"); 
-						week.setUntil("friday");
-						ifContext.addDayBound(week);
-				}
-				
-				
-				return ifContext;
+		return false;
 		}
 		
-	
+	}
 
-	public TimeOfDay setTimeOfDayNotClockFormat(String clockformat, String higher){
-		TimeOfDay timeofDay=new TimeOfDay();
-		String [] clockFormat=clockformat.split(":");
-		timeofDay.setHour(clockFormat[0]);
-		timeofDay.setMinute(clockFormat[1]);
-		timeofDay.setSecond(clockFormat[2]);
-		timeofDay.setMili(Integer.valueOf(timeofDay.getHour()), Integer.valueOf(timeofDay.getMinute()), Integer.valueOf(timeofDay.getSecond()));
-		if(higher.compareTo("1")==0){
-			timeofDay.setHigherThan(false);
-		}
-		else{
-			timeofDay.setHigherThan(true);
-		}
-		return timeofDay;
-	}*/
-	
-	
-	
-}

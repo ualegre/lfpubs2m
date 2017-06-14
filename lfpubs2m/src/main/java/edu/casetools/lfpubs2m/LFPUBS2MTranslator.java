@@ -163,7 +163,9 @@ public class LFPUBS2MTranslator {
 	}
 	
 	private Vector<LFPUBSPattern> CreatingOutputRules(Vector<LFPUBSPattern> patterns,GeneralCondition generalCondition) {
+		
 		String time_context,day_bound, sensor_bound;
+		TimeBound specificbound=new TimeBound();
 		
 		TimeBound narrowestTimeBound=DefineGeneralTimeContext(generalCondition.getTimebound());
 		context.put( "actionMap_time_context", generalCondition.getTimebound());
@@ -186,8 +188,16 @@ public class LFPUBS2MTranslator {
 			day_bound="day_context_+"+i;
 			sensor_bound="sensor_context_"+i;
 			if(patterns.get(i).getCalendar_context().size()!=0){
-				String Output=DefineCalendarContext(patterns.get(i).getCalendar_context(), generalCondition.getTimebound(), time_context, narrowestTimeBound);
-				patterns.get(i).addOutput(Output);
+				for(int j=0; j<patterns.get(i).getCalendar_context().size();j++){
+					GeneralCondition specificCondition=new GeneralCondition();
+					specificbound=DefineCalendarContext(patterns.get(i).getCalendar_context().get(j), generalCondition.getTimebound(),narrowestTimeBound);
+					specificCondition.setTimebound(specificbound);
+					context.put(time_context,specificCondition.getTimebound());
+					states.put(time_context, 2);
+					
+				}
+				patterns.get(i).addOutput(time_context);
+				
 			}
 			else{
 					time_context="actionMap_time_context";
@@ -195,6 +205,7 @@ public class LFPUBS2MTranslator {
 				}
 			//Approach if specific Conditions introduce Day Boundaries	
 			if(patterns.get(i).getDay_context().size()!=0){
+				//As no Specific Condition will have a day boundary not written in GeneralCondition, only the specific condition will be taken into account 
 				Vector<DayBound>specificDays=DefineDayContext(patterns.get(i).getDay_context(), generalCondition.getDayOfWeek(), day_bound, narrowestDayBoundVector);
 				if(specificDays.size()>1){
 					for(int z=0;z<specificDays.size();z++){
@@ -309,62 +320,38 @@ public class LFPUBS2MTranslator {
 	private Vector<DayBound> DefineDayContext(Vector<String> day_context, Vector<String> dayOfWeek, String day_bound, Vector<DayBound> narrowestDayBoundVector) {
 		DayBound generalCondition= new DayBound();
 		Vector<DayBound>generalDayBound= new Vector<DayBound>();
-		for(int k=0;k<day_context.size();k++){
-			 if(dayOfWeek.contains(day_context.get(k))==false){
-				 dayOfWeek.add(day_context.get(k));
-				}
-			 }
-		dayOfWeek=sortDays(dayOfWeek);
-		if(isSeparated(dayOfWeek)==false){
-			generalCondition.setSince(dayOfWeek.get(0));
-			generalCondition.setUntil(dayOfWeek.get(dayOfWeek.size()-1));
+		
+		if(day_context.size()>1){
+			generalCondition.setSince(day_context.get(0));
+			generalCondition.setUntil(day_context.get(day_context.size()-1));
+			generalCondition.setPriority(1);
 			generalDayBound.add(generalCondition);
 		}
 		else{
-			for(int i=0;i<dayOfWeek.size();i++){
-				generalCondition.setSince(dayOfWeek.get(i));
-				generalDayBound.add(generalCondition);
-			}
+			generalCondition.setSince(day_context.get(0));
+			generalCondition.setPriority(1);
+			generalDayBound.add(generalCondition);
 		}
 		
 		return generalDayBound;
 	}
 
-	private Vector<String> sortDays(Vector<String> dayOfWeek) {
-		String[] week={"monday", "tuesday", "wednesday", "thursday", "friday","saturday", "sunday"};
-		Vector<String> sortedDays= new Vector<String>();
-		int find=findDay(dayOfWeek);
-		for(int i=find;i<week.length;i++){
-			if(dayOfWeek.contains(week[i])==true){
-			sortedDays.add(week[i]);
-			i=find;
-		}
-		}
-		return sortedDays;
-	}
-
-	private String DefineCalendarContext(Vector<TimeBound> calendar_context, TimeBound timebound, String time_context, TimeBound narrowestTimeBound) {
+	private TimeBound DefineCalendarContext(TimeBound calendar_context, TimeBound timebound, TimeBound narrowestTimeBound) {
 		String output="";
-		for(int j=0;j<calendar_context.size();j++){
-			if(calendar_context.get(j).getUntil()!=null){
-				if(calendar_context.get(j).getUntil().getMiliseconds()<generalCondition.getTimebound().getUntil().getMiliseconds()){
-					narrowestTimeBound.setUntil(calendar_context.get(j).getUntil());
+			if(calendar_context.getUntil()!=null){
+				if(calendar_context.getUntil().getMiliseconds()<generalCondition.getTimebound().getUntil().getMiliseconds()){
+					narrowestTimeBound.setUntil(calendar_context.getUntil());
 					narrowestTimeBound.setPriority(0);
 					}
 				}
-			if(calendar_context.get(j).getSince()!=null){
-				if(calendar_context.get(j).getSince().getMiliseconds()>generalCondition.getTimebound().getSince().getMiliseconds()){
-					narrowestTimeBound.setSince(calendar_context.get(j).getSince());
+			if(calendar_context.getSince()!=null){
+				if(calendar_context.getSince().getMiliseconds()>generalCondition.getTimebound().getSince().getMiliseconds()){
+					narrowestTimeBound.setSince(calendar_context.getSince());
 					narrowestTimeBound.setPriority(0);
 					}
 				}
-		
-		}
-		context.put(time_context,narrowestTimeBound);
-		states.put(time_context, 2);
-
 	
-		return time_context;
+		return narrowestTimeBound;
 	}
 
 	private Vector<LFPUBSPattern> defineStates(Vector<LFPUBSPattern> patterns) {
@@ -374,22 +361,38 @@ public class LFPUBS2MTranslator {
 			for(int j=0;j<patterns.get(i).getEvents().size();j++){
 				if((patterns.get(i).getEvents().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
 					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+					String oposevent=patterns.get(i).getEvents().get(j).getNegatedStatus()+patterns.get(i).getEvents().get(j).getId();
 					states.put(event,-3);
+					if(states.containsKey(oposevent)==false){
+					states.put(oposevent, 3);
+				}
 				}
 				else if((patterns.get(i).getEvents().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
 					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
+					String oposevent=patterns.get(i).getEvents().get(j).getNegatedStatus()+patterns.get(i).getEvents().get(j).getId();
 					states.put(event,3);
+					if(states.containsKey(oposevent)==false){
+						states.put(oposevent, -3);
+					}
 					
 				}
 			}
 			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
 				if((patterns.get(i).getConsequences().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId())==false)){
 					String event=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+					String oposevent=patterns.get(i).getConsequences().get(j).getNegatedStatus()+patterns.get(i).getConsequences().get(j).getId();
 					states.put(event,-3);
+					if(states.containsKey(oposevent)==false){
+						states.put(oposevent, 3);
+					}
 				}
 				else if((patterns.get(i).getConsequences().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId())==false)){
 					String event=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
+					String oposevent=patterns.get(i).getConsequences().get(j).getNegatedStatus()+patterns.get(i).getConsequences().get(j).getId();
 					states.put(event,3);
+					if(states.containsKey(oposevent)==false){
+						states.put(oposevent, -3);
+					}
 			}
 			patterns.get(i).addOutput(rule);
 			states.put(rule, 1);

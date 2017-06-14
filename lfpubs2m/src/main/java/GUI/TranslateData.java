@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 
 import javax.swing.BorderFactory;
@@ -20,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 import edu.casetools.lfpubs2m.LFPUBS2MTranslator;
 import GUI.LoadingData;
@@ -110,6 +113,18 @@ public class TranslateData extends JFrame {
 				jButtonTranslate.addActionListener(new java.awt.event.ActionListener(){
 					public void actionPerformed(java.awt.event.ActionEvent e){
 						jTextAreaShowRules.append(""+translator.getTranslation(file));
+						try{
+							File files=new File("./results/lfpubs2mes.mtpl");
+							BufferedWriter bw = new BufferedWriter(new FileWriter(files));
+							PrintWriter writer = new PrintWriter(bw);
+							writer.println("");
+							writer.print(""+translator.getTranslation(file));
+							writer.print("");
+							writer.close();
+						}
+						catch(Exception error){	
+							System.out.println("Error Message: " + error.getMessage());
+						}
 					}
 				});
 			}

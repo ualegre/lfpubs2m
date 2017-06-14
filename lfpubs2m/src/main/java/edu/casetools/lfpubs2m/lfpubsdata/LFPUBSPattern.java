@@ -145,7 +145,11 @@ public class LFPUBSPattern {
 		int numb=0;
 		auxiliar_pattern=auxiliar_pattern + " ssr( ( ";
 				if(events.size()!=0){
+					if(delay!=null){
 					auxiliar_pattern=auxiliar_pattern+"[-]["+delay+"]";
+					}else{
+					auxiliar_pattern=auxiliar_pattern+"[-]";
+					}
 				}
 		for(int i=0;i<events.size();i++){
 			auxiliar_pattern=auxiliar_pattern+auxiliar_and[j]+events.get(i).getStatus()+events.get(i).getId().substring(0, events.get(i).getId().length()-2);

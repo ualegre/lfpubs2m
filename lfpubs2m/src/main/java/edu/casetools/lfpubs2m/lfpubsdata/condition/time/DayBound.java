@@ -4,10 +4,12 @@ public class DayBound {
 
 		String since;
 		String until;
+		int priority;
 		
 	public DayBound(){
 		since=null;
 		until=null;
+		priority=0;
 	}
 	public DayBound(String since, String until){
 		this.since=since;
@@ -26,6 +28,12 @@ public class DayBound {
 	}
 	public void setUntil(String until) {
 		this.until = until;
+	}
+	public void setPriority(int priority) {
+		this.priority=priority;
+	}
+	public int getPriority() {
+		return priority;
 	}
 	
 	
