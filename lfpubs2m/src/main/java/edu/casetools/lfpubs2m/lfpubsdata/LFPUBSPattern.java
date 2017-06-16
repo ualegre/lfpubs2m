@@ -25,6 +25,7 @@ public class LFPUBSPattern {
 	Vector<String> day_context;
 	Vector<String>	outputs;
 	String general_context;
+	double freq;
 	Boolean actuator;
 	Long aux;
 	String delay;
@@ -37,6 +38,7 @@ public class LFPUBSPattern {
 		day_context			 = new Vector<String>();
 		outputs				 = new Vector<String>();
 		actuator			 = false;
+		freq=0.0;
 	}
 
 	public void setContext(IfContext context){
@@ -52,6 +54,18 @@ public class LFPUBSPattern {
 		if(occurs.getFrequency()==0){		// all the automation patterns introduced from LFPUBS related with the actuator have frequency=0;
 			this.actuator=true;
 		}
+		else{
+			this.freq=occurs.getFrequency();
+		}
+	}
+	
+
+	public double getFreq() {
+		return freq;
+	}
+
+	public void setFreq(double freq) {
+		this.freq = freq;
 	}
 
 	public void setAction(ThenDo thenDo) {
@@ -148,7 +162,7 @@ public class LFPUBSPattern {
 					if(delay!=null){
 					auxiliar_pattern=auxiliar_pattern+"[-]["+delay+"]";
 					}else{
-					auxiliar_pattern=auxiliar_pattern+"[-]";
+					auxiliar_pattern=auxiliar_pattern+"";
 					}
 				}
 		for(int i=0;i<events.size();i++){

@@ -6,7 +6,7 @@ public class Occurs {
 	String type;
 	String time;
 	Vector<Sensor> sensors;
-	int frequency;
+	double frequency;
 	
 	public Occurs(){
 		sensors = new Vector<Sensor>();
@@ -30,10 +30,10 @@ public class Occurs {
 	public void setSensors(Vector<Sensor> sensors) {
 		this.sensors = sensors;
 	}
-	public int getFrequency() {
+	public double getFrequency() {
 		return frequency;
 	}
-	public void setFrequency(int frequency) {
+	public void setFrequency(double frequency) {
 		this.frequency = frequency;
 	}
 	public void setSensor(Sensor sensor){

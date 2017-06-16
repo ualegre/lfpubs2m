@@ -429,6 +429,8 @@ public class LFPUBS2MTranslator {
 	}
 
 	private Vector<LFPUBSPattern> concatenatePatterns(Vector<LFPUBSPattern> patterns) {
+		double freq=0;
+		int pos=0;
 		for(int i=0;i<patterns.size();i++){
 			String rule="Pattern_"+i;
 			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
@@ -438,10 +440,15 @@ public class LFPUBS2MTranslator {
 				if(findPath.size()==1){
 					patterns.get(findPath.get(0)).addOutput(rule);
 				}
-				else{
+				else if (findPath.size()>1){
 					for(int k=0;k<findPath.size();k++){
-						patterns.get(findPath.get(k)).addOutput(rule);
+					/*	if((patterns.get(findPath.get(k)).getFreq()==0)||(patterns.get(findPath.get(k)).getFreq()>freq)){
+							freq=patterns.get(findPath.get(k)).getFreq();
+							pos=k;
+						}*/
+						patterns.get(findPath.get(k)).addOutput(rule);///freq haundixena daukena hartu
 					}
+					 
 				}
 			}
 		}

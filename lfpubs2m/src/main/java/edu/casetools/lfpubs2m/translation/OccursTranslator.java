@@ -116,7 +116,7 @@ public class OccursTranslator {
 		p = Pattern.compile(Syntax.ON_OCCURS_FORTH_ELEMENT_PATTERN+"\\"+Syntax.ON_OCCURS_FORTH_ELEMENT_STOP);
 		m = p.matcher(line);
 		if(m.find()){
-			occurs.setFrequency(Integer.parseInt( m.group(1) ) );
+			occurs.setFrequency(Double.parseDouble( m.group(1) ) );
 		}
 		return occurs;
 	}
