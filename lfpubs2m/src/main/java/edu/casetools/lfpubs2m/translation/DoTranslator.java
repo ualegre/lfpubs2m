@@ -86,7 +86,9 @@ public class DoTranslator {
 	    		sensor.setStatus( separateData[i].substring(1) );
 	    		break;
 	    	case 1:
-	    		sensor.setId(separateData[i].substring(0, separateData[i].length() - 3));
+	    		String id=separateData[i].substring(0, separateData[i].length() - 1).replace("(", "_");
+	    		String id_f=id.replace(")","");
+	    		sensor.setId(id_f);
 	    		break;
 	    	default:
 	    		break;

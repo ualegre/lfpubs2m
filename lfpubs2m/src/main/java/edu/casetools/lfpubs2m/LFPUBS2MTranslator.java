@@ -394,18 +394,18 @@ public class LFPUBS2MTranslator {
 						states.put(oposevent, -3);
 					}
 			}
+				}
 			patterns.get(i).addOutput(rule);
 			states.put(rule, 1);
 			}
-		}
 			else{for(int j=0;j<patterns.get(i).getEvents().size();j++){
 				if((patterns.get(i).getEvents().get(j).isNegative()==true)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
 					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
-					states.put(event,-1);
+					states.put(event,-3);
 				}
 				else if((patterns.get(i).getEvents().get(j).isNegative()==false)&&(states.containsKey(patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId())==false)){
 					String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
-					states.put(event,1);
+					states.put(event,3);
 					
 				}
 			}
@@ -431,12 +431,14 @@ public class LFPUBS2MTranslator {
 	private Vector<LFPUBSPattern> concatenatePatterns(Vector<LFPUBSPattern> patterns) {
 		double freq=0;
 		int pos=0;
+		int pattern=0;
 		for(int i=0;i<patterns.size();i++){
 			String rule="Pattern_"+i;
 			for(int j=0;j<patterns.get(i).getConsequences().size();j++){
 				String consequence=patterns.get(i).getConsequences().get(j).getStatus()+patterns.get(i).getConsequences().get(j).getId();
 				Vector<Integer>findPath=new Vector<Integer>();
-				findPath=findPattern(patterns, consequence,findPath);
+				 pattern=i;
+				findPath=findPattern(patterns, consequence,findPath, pattern);
 				if(findPath.size()==1){
 					patterns.get(findPath.get(0)).addOutput(rule);
 				}
@@ -456,12 +458,11 @@ public class LFPUBS2MTranslator {
 		return patterns;
 	}
 
-	private Vector<Integer> findPattern(Vector<LFPUBSPattern> patterns, String consequence, Vector<Integer>findPath) {
-		
+	private Vector<Integer> findPattern(Vector<LFPUBSPattern> patterns, String consequence, Vector<Integer>findPath, int numb) {
 		for(int i=0;i<patterns.size();i++){
 			for(int j=0;j<patterns.get(i).getEvents().size();j++){
 				String event=patterns.get(i).getEvents().get(j).getStatus()+patterns.get(i).getEvents().get(j).getId();
-				if(consequence.compareTo(event)==0){
+				if((consequence.compareTo(event)==0)&&(numb!=i)){
 					findPath.add(i);
 				}
 			}

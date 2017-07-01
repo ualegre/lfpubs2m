@@ -36,14 +36,14 @@ public class Syntax {
 
 	
 	public final static String ON_OCCURS_START       		 	  = "ONoccurs(";
-	public final static String ON_OCCURS_STOP       		 	  = ")Frequency";
+	public final static String ON_OCCURS_STOP       		 	  = ")Probability";
 	public final static String ON_OCCURS_FIRST_ELEMENT_PATTERN    = "ONoccurs\\((.*?),";
 	public final static String ON_OCCURS_SECOND_ELEMENT_PATTERN   = "ONoccurs\\(";
 	public final static String ON_OCCURS_SECOND_ELEMENT_SEPARATOR = "&";
 	public final static String ON_OCCURS_SENSOR_SEPARATOR = ",";
 	public final static String ON_OCCURS_SENSOR_FIRST_ELEMENT_PATTERN = "\\((.*?),";
-	public final static String ON_OCCURS_THIRD_ELEMENT_PATTERN    = ",(.*)\\)Frequency";
-	public final static String ON_OCCURS_FORTH_ELEMENT_PATTERN    = "Frequency\\:(.*?)";
+	public final static String ON_OCCURS_THIRD_ELEMENT_PATTERN    = ",(.*)\\)Probability";
+	public final static String ON_OCCURS_FORTH_ELEMENT_PATTERN    = "Probability\\:(.*?)";
 	public final static String ON_OCCURS_FORTH_ELEMENT_STOP   	  = ")";
 	
 	public final static String IF_CONTEXT_START      		 = "IFcontext";
@@ -68,7 +68,7 @@ public class Syntax {
 	public final static String THEN_DO_SENSOR_SEPARATOR 			= ",";
 	public final static String THEN_DO_SENSOR_FIRST_ELEMENT_PATTERN = "\\((.*?),";
 	public final static String THEN_DO_THIRD_ELEMENT_PATTERN    	= ",(.*)\\)when";
-	public final static String THEN_DO_FORTH_ELEMENT_PATTERN   	    = "Frequency\\:(.*?)";
+	public final static String THEN_DO_FORTH_ELEMENT_PATTERN   	    = "Probability\\:(.*?)";
 	public final static String THEN_DO_FORTH_ELEMENT_STOP   	 	= ")";
 	
 	

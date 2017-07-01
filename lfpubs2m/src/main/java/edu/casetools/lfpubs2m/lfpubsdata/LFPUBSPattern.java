@@ -51,7 +51,7 @@ public class LFPUBSPattern {
 		for(int i=0;i<occurs.getSensors().size();i++){
 			events.add( occurs.getSensors().get(i) );
 		}
-		if(occurs.getFrequency()==0){		// all the automation patterns introduced from LFPUBS related with the actuator have frequency=0;
+		if(occurs.getFrequency()<=0.0){		// all the automation patterns introduced from LFPUBS related with the actuator have frequency=0;
 			this.actuator=true;
 		}
 		else{
