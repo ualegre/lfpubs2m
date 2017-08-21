@@ -1,0 +1,130 @@
+
+ states( Entrance , Shower , Entrance , Pattern_9 , Pattern_7 , Pattern_8 , Pattern_5 , Pattern_6 , Pattern_3 , Toilet , Pattern_4 , Pattern_1 , Pattern_2 , Pattern_0 , Cabinet , Corridor , time_context_8 , BedroomDoor , BathroomLights , Corridor , BathroomFan , Kettle , time_context_0 , LightBedroom , Pattern_11 , Pattern_10 , Gel , Bathroom , Pattern_17 , Pattern_16 , Pattern_15 , Pattern_14 , actionMap_time_context , Pattern_13 , Pattern_12 , Mouthwash , Towel , actionMap_day_context , Alarm ); 
+ is( time_context_8 ); 
+ is( time_context_0 ); 
+ is( LightBedroom ); 
+ is( actionMap_time_context ); 
+ is( actionMap_day_context ); 
+
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Bathroom ,0 ); 
+ holdsAt( #Shower ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #Pattern_9 ,0 ); 
+ holdsAt( #Pattern_7 ,0 ); 
+ holdsAt( #Pattern_8 ,0 ); 
+ holdsAt( #Pattern_5 ,0 ); 
+ holdsAt( #Pattern_6 ,0 ); 
+ holdsAt( #Pattern_3 ,0 ); 
+ holdsAt( #Toilet ,0 ); 
+ holdsAt( #Pattern_4 ,0 ); 
+ holdsAt( #LightBedroom ,0 ); 
+ holdsAt( #Pattern_1 ,0 ); 
+ holdsAt( #Pattern_2 ,0 ); 
+ holdsAt( #Pattern_0 ,0 ); 
+ holdsAt( #Cabinet ,0 ); 
+ holdsAt( #Toilet ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #time_context_8 ,0 ); 
+ holdsAt( #BathroomFan ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #BathroomLights ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #BathroomFan ,0 ); 
+ holdsAt( #Kettle ,0 ); 
+ holdsAt( #time_context_0 ,0 ); 
+ holdsAt( #LightBedroom ,0 ); 
+ holdsAt( #Pattern_11 ,0 ); 
+ holdsAt( #Pattern_10 ,0 ); 
+ holdsAt( #Gel ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #BathroomLights ,0 ); 
+ holdsAt( #Shower ,0 ); 
+ holdsAt( #Bathroom ,0 ); 
+ holdsAt( #Pattern_17 ,0 ); 
+ holdsAt( #Pattern_16 ,0 ); 
+ holdsAt( #Pattern_15 ,0 ); 
+ holdsAt( #Pattern_14 ,0 ); 
+ holdsAt( #actionMap_time_context ,0 ); 
+ holdsAt( #Pattern_13 ,0 ); 
+ holdsAt( #Pattern_12 ,0 ); 
+ holdsAt( #Mouthwash ,0 ); 
+ holdsAt( #Towel ,0 ); 
+ holdsAt( #actionMap_day_context ,0 ); 
+ holdsAt( #Alarm ,0 ); 
+ holdsAt( #Cabinet ,0 ); 
+
+ ssr( ( clockBetween(09:18:06-09:20:51 ) ) -> time_context_0 ); 
+ ssr( ( #clockBetween(09:18:06-09:20:51 ) ) -> #time_context_0 ); 
+ ssr( ( weekDayBetween(monday-sunday ) ) ->actionMap_day_context ) ;
+ ssr( ( #weekDayBetween(monday-sunday ) ) ->#actionMap_day_context ); 
+ ssr( ( clockBetween(09:18:06-08:22:17 ) ) -> time_context_8 ); 
+ ssr( ( #clockBetween(09:18:06-08:22:17 ) ) -> #time_context_8 ); 
+ ssr( ( clockBetween(09:18:06-09:25:10 ) ) -> actionMap_time_context ); 
+ ssr( ( #clockBetween(09:18:06-09:25:10 ) ) -> #actionMap_time_context ); 
+ 
+ ssr( ( time_context_0 ^ actionMap_day_context ) -> Pattern_0 ); 
+ ssr( (Pattern_0 ) ->#Corridor ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_1 ); 
+ ssr( (Pattern_1 ) ->#Entrance ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_2 ); 
+ ssr( (Pattern_2 ) ->#Entrance ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_3 ); 
+ ssr( (Pattern_3 ) ->Toilet ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_4 ); 
+ ssr( (Pattern_4 ) ->Corridor ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_5 ); 
+ ssr( (Pattern_5 ) ->Entrance ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_6 ); 
+ ssr( (Pattern_6 ) ->#BedroomDoor ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_7 ); 
+ ssr( (Pattern_7 ) ->BedroomDoor ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_8 ); 
+ ssr( (Pattern_8 ) ->#LightBedroom ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_9 ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_10 ); 
+ ssr( (Pattern_10 ) ->#Corridor ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_11 ); 
+ ssr( (Pattern_11 ) ->Kettle ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_12 ); 
+ ssr( (Pattern_12 ) ->Entrance ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_13 ); 
+ ssr( (Pattern_13 ) ->Corridor ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_14 ); 
+ ssr( (Pattern_14 ) ->#Toilet ); 
+
+ 
+ ssr( ( actionMap_time_context ^ actionMap_day_context ) -> Pattern_15 ); 
+ ssr( (Pattern_15 ) ->Kettle ); 
+

@@ -1,0 +1,93 @@
+
+ states( Pattern_11 , Pattern_10 , Entrance , Sofa , time_context_10 , Lamp , Pattern_9 , Pattern_7 , Pattern_8 , Pattern_5 , Pattern_6 , Pattern_3 , Pattern_4 , Pattern_1 , Pattern_2 , actionMap_time_context , Pattern_0 , Wardrobe , Corridor , actionMap_day_context , time_context_8 , BedroomDoor , BedroomDoor , EntranceDoor ); 
+ is( Entrance ); 
+ is( Sofa ); 
+ is( time_context_10 ); 
+ is( actionMap_time_context ); 
+ is( Wardrobe ); 
+ is( Corridor ); 
+ is( actionMap_day_context ); 
+ is( time_context_8 ); 
+ is( BedroomDoor ); 
+ is( BedroomDoor ); 
+ is( EntranceDoor ); 
+
+ holdsAt( #Pattern_11 ,0 ); 
+ holdsAt( #Pattern_10 ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Sofa ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #EntranceDoor ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #time_context_10 ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #Lamp ,0 ); 
+ holdsAt( #Pattern_9 ,0 ); 
+ holdsAt( #Pattern_7 ,0 ); 
+ holdsAt( #Pattern_8 ,0 ); 
+ holdsAt( #Pattern_5 ,0 ); 
+ holdsAt( #Pattern_6 ,0 ); 
+ holdsAt( #Pattern_3 ,0 ); 
+ holdsAt( #Pattern_4 ,0 ); 
+ holdsAt( #Pattern_1 ,0 ); 
+ holdsAt( #Pattern_2 ,0 ); 
+ holdsAt( #actionMap_time_context ,0 ); 
+ holdsAt( #Pattern_0 ,0 ); 
+ holdsAt( #Wardrobe ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Entrance ,0 ); 
+ holdsAt( #Sofa ,0 ); 
+ holdsAt( #Wardrobe ,0 ); 
+ holdsAt( #Corridor ,0 ); 
+ holdsAt( #actionMap_day_context ,0 ); 
+ holdsAt( #time_context_8 ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #BedroomDoor ,0 ); 
+ holdsAt( #EntranceDoor ,0 ); 
+
+ ssr( ( clockBetween(10:04:36-17:38:05 ) ) -> time_context_10 ); 
+ ssr( ( #clockBetween(10:04:36-17:38:05 ) ) -> #time_context_10 ); 
+ ssr( ( weekDayBetween(monday-saturday ) ) ->actionMap_day_context ) ;
+ ssr( ( #weekDayBetween(monday-saturday ) ) ->#actionMap_day_context ); 
+ ssr( ( clockBetween(07:43:42-20:23:27  ) ) -> time_context_8 ); 
+ ssr( ( #clockBetween(07:43:42-20:23:27) ) -> #time_context_8 ); 
+ ssr( ( clockBetween(10:04:36-20:23:27 ) ) -> actionMap_time_context ); 
+ ssr( ( #clockBetween(10:04:36-20:23:27 ) ) -> #actionMap_time_context ); 
+ 
+ ssr( ( [-][00:00:01]EntranceDoor ^ actionMap_time_context ^ actionMap_day_context ) -> Pattern_0 ); 
+
+ 
+ ssr( ( [-][00:00:03]#EntranceDoor ^ Entrance ^ actionMap_time_context ^ Pattern_0 ^ Pattern_0 ^ actionMap_day_context ) -> Pattern_1 ); 
+
+ 
+ ssr( ( [-][00:00:01]Corridor ^ actionMap_time_context ^ Pattern_1 ^ actionMap_day_context ) -> Pattern_2 ); 
+
+ 
+ ssr( ( [-][00:00:01]BedroomDoor ^ actionMap_time_context ^ Pattern_2 ^ actionMap_day_context ) -> Pattern_3 ); 
+
+ 
+ ssr( ( [-][00:05:23]#BedroomDoor ^ actionMap_time_context ^ Pattern_3 ^ actionMap_day_context ) -> Pattern_4 ); 
+
+ 
+ ssr( ( [-][00:02:45]Wardrobe ^ actionMap_time_context ^ Pattern_4 ^ actionMap_day_context ) -> Pattern_5 ); 
+
+ 
+ ssr( ( [-][00:00:29]#Wardrobe ^ actionMap_time_context ^ Pattern_5 ^ actionMap_day_context ) -> Pattern_6 ); 
+
+ 
+ ssr( ( [-][00:00:01]BedroomDoor ^ actionMap_time_context ^ Pattern_6 ^ actionMap_day_context ) -> Pattern_7 ); 
+
+ 
+ ssr( ( [-][00:00:05]#BedroomDoor ^ time_context_8 ^ Pattern_7 ^ actionMap_day_context ) -> Pattern_8 ); 
+
+ 
+ ssr( ( [-][00:00:09]Entrance ^ actionMap_time_context ^ Pattern_8 ^ actionMap_day_context ) -> Pattern_9 ); 
+
+ 
+ ssr( ( [-][00:01:35]#Entrance ^ time_context_10 ^ Pattern_9 ^ actionMap_day_context ) -> Pattern_10 ); 
+
+ 
+ ssr( ( Sofa ^ actionMap_time_context ^ Pattern_10 ^ actionMap_day_context ) -> Pattern_11 ); 
+ ssr( (Pattern_11 ) ->Lamp ); 
+
